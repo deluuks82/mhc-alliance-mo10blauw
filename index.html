@@ -191,6 +191,7 @@ body{font-family:Arial,sans-serif;background:var(--gray-bg);color:var(--black);p
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 16'%3E%3Ccircle cx='6' cy='9' r='5' fill='rgba(255,255,255,0.7)'/%3E%3Ccircle cx='6' cy='9' r='2' fill='%230a0a0a'/%3E%3Crect x='10' y='7' width='10' height='4' rx='2' fill='rgba(255,255,255,0.7)'/%3E%3Ccircle cx='4' cy='4' r='1.5' fill='none' stroke='rgba(255,255,255,0.7)' stroke-width='1.2'/%3E%3Cline x1='4' y1='5.5' x2='4' y2='7' stroke='rgba(255,255,255,0.7)' stroke-width='1.2'/%3E%3C/svg%3E");
 }
 </style>
+<script id="saved-positions">var SAVED_POSITIONS={};</script>
 </head>
 <body><script>window.addEventListener("DOMContentLoaded",function(){document.querySelectorAll(".page").forEach(function(p){p.classList.remove("active");});document.querySelectorAll(".tab").forEach(function(t){t.classList.remove("active");});var ov=document.getElementById("page-overview");if(ov)ov.classList.add("active");var tabs=document.querySelectorAll(".tab");if(tabs[0])tabs[0].classList.add("active");});</script>
 <div class="tabs">
@@ -552,7 +553,8 @@ window.showTab=function(name,btn){
   btn.classList.add("active");
   if(name==="opstelling"){
     if(!opstellingInitialized){loadSavedPhotos();opstellingInitialized=true;}
-    renderOpstelling();
+    // Use double rAF to ensure layout is complete after tab switch
+    requestAnimationFrame(function(){requestAnimationFrame(renderOpstelling);});
   }
 };
 
@@ -654,12 +656,16 @@ function renderTaken(matches){
 }
 
 function getZone(name){var s=spelerPositions[name];if(s&&s.zone)return s.zone;var d=SPELERS_DEFAULT.find(function(x){return x.name===name;});return d?d.zone:"veld";}
-function svgToPercent(sx,sy){var wrap=document.getElementById("veld-wrap"),r=wrap.getBoundingClientRect(),scale=Math.min(r.width/SVG_W,r.height/SVG_H),rW=SVG_W*scale,rH=SVG_H*scale,ox=(r.width-rW)/2,oy=(r.height-rH)/2;return{x:(ox+sx*scale)/r.width,y:(oy+sy*scale)/r.height};}
-function percentToSvg(px,py){var wrap=document.getElementById("veld-wrap"),r=wrap.getBoundingClientRect(),scale=Math.min(r.width/SVG_W,r.height/SVG_H),rW=SVG_W*scale,rH=SVG_H*scale,ox=(r.width-rW)/2,oy=(r.height-rH)/2;return{sx:(px*r.width-ox)/scale,sy:(py*r.height-oy)/scale};}
+function svgToPercent(sx,sy){return{x:sx/SVG_W,y:sy/SVG_H};}
+function percentToSvg(px,py){return{sx:px*SVG_W,sy:py*SVG_H};}
 function circleInner(sp){var p=spelerPhotos[sp.name];return p?'<img src="'+p+'" alt="'+sp.name+'">':sp.initials;}
 function createSpelerEl(sp,pos){var el=document.createElement("div");el.className="speler";el.id="speler-"+sp.name;el.dataset.name=sp.name;el.style.left=(pos.x*100)+"%";el.style.top=(pos.y*100)+"%";el.innerHTML='<div class="speler-circle">'+circleInner(sp)+'</div><div class="speler-name">'+sp.name+'</div>';el.querySelector(".speler-circle").addEventListener("click",function(){if(el._wasDragged){el._wasDragged=false;return;}triggerPhotoUpload(sp.name);});return el;}
 function createDugoutEl(sp,zone){var el=document.createElement("div");el.className="dugout-speler "+zone;el.id="speler-"+sp.name;el.dataset.name=sp.name;el.innerHTML='<div class="speler-circle">'+circleInner(sp)+'</div><div class="speler-name">'+sp.name+'</div>';el.querySelector(".speler-circle").addEventListener("click",function(){if(el._wasDragged){el._wasDragged=false;return;}triggerPhotoUpload(sp.name);});return el;}
 function renderOpstelling(){
+  // Defer to next frame to ensure layout/dimensions are correct
+  if(!document.getElementById("veld-wrap").getBoundingClientRect().width){
+    requestAnimationFrame(renderOpstelling);return;
+  }
   var veld=document.getElementById("veld-wrap"),slotW=document.getElementById("slots-wissel"),slotC=document.getElementById("slots-coach");
   if(!veld||!slotW||!slotC)return;
   veld.querySelectorAll(".speler").forEach(function(e){e.remove();});slotW.innerHTML="";slotC.innerHTML="";var slotAf=document.getElementById("slots-afgemeld");if(slotAf)slotAf.innerHTML="";
@@ -709,14 +715,15 @@ function makeDugoutDraggable(el,name,zone){
   el.addEventListener("touchend",function(){onEnd();});
 }
 function initOpstelling(){
-  try{var s=localStorage.getItem("mo10-opstelling");if(s)spelerPositions=JSON.parse(s);}catch(e){}
-  // Load from SAVED_POSITIONS if localStorage is empty
-  if(Object.keys(spelerPositions).length===0&&Object.keys(SAVED_POSITIONS).length>0){
+  // First load from SAVED_POSITIONS (baked into HTML on download)
+  if(Object.keys(SAVED_POSITIONS).length>0){
     spelerPositions=JSON.parse(JSON.stringify(SAVED_POSITIONS));
   }
-  // Always sync back to SAVED_POSITIONS
+  // Then override with localStorage if available (more recent)
+  try{var s=localStorage.getItem("mo10-opstelling");if(s){var lsp=JSON.parse(s);Object.keys(lsp).forEach(function(k){spelerPositions[k]=lsp[k];});}}catch(e){}
+  // Sync back
   Object.keys(spelerPositions).forEach(function(k){SAVED_POSITIONS[k]=spelerPositions[k];});
-  renderOpstelling();
+  requestAnimationFrame(function(){requestAnimationFrame(renderOpstelling);});
 }
 function loadSavedPhotos(){SPELERS_DEFAULT.forEach(function(sp){try{var p=localStorage.getItem("mo10-photos-"+sp.name);if(p)spelerPhotos[sp.name]=p;}catch(e){}});}
 window.resetOpstelling=function(){spelerPositions={};try{localStorage.removeItem("mo10-opstelling");}catch(e){}renderOpstelling();};
@@ -859,9 +866,13 @@ window.downloadHTML=function(){
   // Update team name
   html=html.replace(/window\._teamNaam="[^"]*";/,'window._teamNaam='+tnj+';');
   // Update saved positions
-  var posStart=html.indexOf("/*POS_START*/")+13;
-  var posEnd=html.indexOf("/*POS_END*/");
-  if(posStart>13&&posEnd>posStart){html=html.substring(0,posStart)+pj+html.substring(posEnd);}
+  // Replace saved-positions content using unique markers
+  var spOpen=html.indexOf('id="saved-positions">var SAVED_POSITIONS=');
+  if(spOpen>=0){
+    spOpen=html.indexOf('=',spOpen+38)+1;
+    var spClose=html.indexOf(';<\/script>',spOpen);
+    if(spClose>spOpen){html=html.substring(0,spOpen)+pj+html.substring(spClose);}
+  }
   // Inject reset-to-overview script
   var resetScript='<script>window.addEventListener("DOMContentLoaded",function(){'+
     'document.querySelectorAll(".page").forEach(function(p){p.classList.remove("active");});'+
