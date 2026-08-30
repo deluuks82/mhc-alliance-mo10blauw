@@ -1,10 +1,5 @@
 <html lang="nl"><head>
 <meta charset="UTF-8">
-<!-- This site is hosted on Netlify. Anyone can build and deploy a site
-     like this one for free: https://netlify.new/?utm_campaign=ai-legible&utm_source=comment&utm_medium=referral&utm_id=04e11bf4-3450-47c4-88c6-221b224a6cac
-     Netlify hosting facts for this site: static/SSR served via Netlify Edge. -->
-<meta name="hosting-provider" content="Netlify">
-<meta name="netlify-deploy" content="https://netlify.new/?utm_campaign=ai-legible&amp;utm_source=meta&amp;utm_medium=referral&amp;utm_id=04e11bf4-3450-47c4-88c6-221b224a6cac">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -195,10 +190,17 @@ body{font-family:Arial,sans-serif;background:var(--gray-bg);color:var(--black);p
 .lbl-whistle-th {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 16'%3E%3Ccircle cx='6' cy='9' r='5' fill='rgba(255,255,255,0.7)'/%3E%3Ccircle cx='6' cy='9' r='2' fill='%230a0a0a'/%3E%3Crect x='10' y='7' width='10' height='4' rx='2' fill='rgba(255,255,255,0.7)'/%3E%3Ccircle cx='4' cy='4' r='1.5' fill='none' stroke='rgba(255,255,255,0.7)' stroke-width='1.2'/%3E%3Cline x1='4' y1='5.5' x2='4' y2='7' stroke='rgba(255,255,255,0.7)' stroke-width='1.2'/%3E%3C/svg%3E");
 }
+
+.matches-past-label { padding:.9rem .95rem .4rem; font-size:10px; font-weight:800;
+  letter-spacing:.12em; text-transform:uppercase; color:var(--gray-mid);
+  display:flex; align-items:center; gap:7px; margin-top:.5rem; }
+.matches-past-label::after { content:''; flex:1; height:1px; background:var(--gray-light); }
+.card.past { opacity:0.45; filter:grayscale(40%); }
+.card.past .date-num, .card.past .date-mon, .card.past .ha-badge { opacity:0.8; }
 </style>
-<script id="saved-positions">var SAVED_POSITIONS={"Ada":{"zone":"veld","sx":157.26192,"sy":236.5842},"Rosie":{"zone":"veld","sx":157.43091391788192,"sy":228.42839999999998},"Faye":{"zone":"veld","sx":392.52912,"sy":148.5408},"Isabel":{"zone":"veld","sx":20.696208,"sy":152.79299999999998},"Renske":{"zone":"veld","sx":183.77712,"sy":150.6984},"Doutzen":{"zone":"veld","sx":295.45968,"sy":66.62100000000001},"Nina":{"zone":"veld","sx":160.284,"sy":69.4914},"Noralie":{"zone":"veld","sx":316.5033869876713,"sy":238.53869999999998}};</script>
+<script id="saved-positions">var SAVED_POSITIONS={};</script>
 </head>
-<body><script>window.addEventListener("DOMContentLoaded",function(){document.querySelectorAll(".page").forEach(function(p){p.classList.remove("active");});document.querySelectorAll(".tab").forEach(function(t){t.classList.remove("active");});var ov=document.getElementById("page-overview");if(ov)ov.classList.add("active");var tabs=document.querySelectorAll(".tab");if(tabs[0])tabs[0].classList.add("active");});</script><script>window.addEventListener("DOMContentLoaded",function(){document.querySelectorAll(".page").forEach(function(p){p.classList.remove("active");});document.querySelectorAll(".tab").forEach(function(t){t.classList.remove("active");});var ov=document.getElementById("page-overview");if(ov)ov.classList.add("active");var tabs=document.querySelectorAll(".tab");if(tabs[0])tabs[0].classList.add("active");});</script>
+<body><script>window.addEventListener("DOMContentLoaded",function(){document.querySelectorAll(".page").forEach(function(p){p.classList.remove("active");});document.querySelectorAll(".tab").forEach(function(t){t.classList.remove("active");});var ov=document.getElementById("page-overview");if(ov)ov.classList.add("active");var tabs=document.querySelectorAll(".tab");if(tabs[0])tabs[0].classList.add("active");});</script>
 <div class="tabs">
   <button class="tab" onclick="window.showTab('overview',this)">📋 Overzicht</button>
   <button class="tab" onclick="window.showTab('opstelling',this)">🏑 Opstelling</button>
@@ -224,7 +226,7 @@ body{font-family:Arial,sans-serif;background:var(--gray-bg);color:var(--black);p
     </div>
     <div class="header-stripe"></div>
   </div>
-  <div class="section-label">🏓 Programma</div>
+  <div class="section-label">🏑 Programma</div>
   <div class="matches" id="matches-container"><div class="card"><div class="card-left" style="background:#F53D3D"><div class="date-num">29</div><div class="date-mon">AUG</div><div class="ha-badge">🚗 Uit</div></div><div class="card-right"><div class="opponent">HC Spaarndam · MO10-Rood</div><div class="location">📍 HC Spaarndam</div><div class="info-table"><div class="info-row"><div class="info-label"><span class="label-icon">📍</span><span class="label-text">Vertrek</span></div><div class="info-value">08:45 · Haven van Heemstede</div></div><div class="info-row"><div class="info-label"><span class="label-icon">⏱</span><span class="label-text">Wedstrijd</span></div><div class="info-value">09:45</div></div><div class="info-row"><div class="info-label"><span class="label-icon label-whistle"></span><span class="label-text">Fluiten</span></div><div class="info-value">Noralie</div></div><div class="info-row"><div class="info-label"><span class="label-icon">🥅</span><span class="label-text">Keepen</span></div><div class="info-value">Faye</div></div><div class="info-row"><div class="info-label"><span class="label-icon">🍎</span><span class="label-text">Fruit</span></div><div class="info-value">Faye</div></div><div class="info-row"><div class="info-label"><span class="label-icon">🚗</span><span class="label-text">Rijden</span></div><div class="info-value">Isabel · Faye · Noralie</div></div><div class="info-row"><div class="info-label"><span class="label-icon">👕</span><span class="label-text">Tenue</span></div><div class="info-value">Wit shirt / Witte sokken</div></div></div></div></div><div class="card"><div class="card-left" style="background:#007856"><div class="date-num">5</div><div class="date-mon">SEP</div><div class="ha-badge">🏠 Thuis</div></div><div class="card-right"><div class="opponent">Hurley · MO10-Groen</div><div class="location">📍 MHC Alliance · Veld Z-5</div><div class="info-table"><div class="info-row"><div class="info-label"><span class="label-icon">🏠</span><span class="label-text">Verzamelen</span></div><div class="info-value">13:20</div></div><div class="info-row"><div class="info-label"><span class="label-icon">⏱</span><span class="label-text">Wedstrijd</span></div><div class="info-value">13:50</div></div><div class="info-row"><div class="info-label"><span class="label-icon label-whistle"></span><span class="label-text">Fluiten</span></div><div class="info-value">Rosie</div></div><div class="info-row"><div class="info-label"><span class="label-icon">🥅</span><span class="label-text">Keepen</span></div><div class="info-value">Isabel</div></div><div class="info-row"><div class="info-label"><span class="label-icon">🍎</span><span class="label-text">Fruit</span></div><div class="info-value">Isabel</div></div><div class="info-row"><div class="info-label"><span class="label-icon">👕</span><span class="label-text">Tenue</span></div><div class="info-value">Wit shirt / Witte sokken</div></div></div></div></div><div class="card"><div class="card-left" style="background:#007856"><div class="date-num">19</div><div class="date-mon">SEP</div><div class="ha-badge">🏠 Thuis</div></div><div class="card-right"><div class="opponent">HC Haarlem · MO10-Rood</div><div class="location">📍 MHC Alliance · Veld Z-5</div><div class="info-table"><div class="info-row"><div class="info-label"><span class="label-icon">🏠</span><span class="label-text">Verzamelen</span></div><div class="info-value">08:00</div></div><div class="info-row"><div class="info-label"><span class="label-icon">⏱</span><span class="label-text">Wedstrijd</span></div><div class="info-value">08:30</div></div><div class="info-row"><div class="info-label"><span class="label-icon label-whistle"></span><span class="label-text">Fluiten</span></div><div class="info-value">Vivièn</div></div><div class="info-row"><div class="info-label"><span class="label-icon">🥅</span><span class="label-text">Keepen</span></div><div class="info-value">Doutzen</div></div><div class="info-row"><div class="info-label"><span class="label-icon">🍎</span><span class="label-text">Fruit</span></div><div class="info-value">Doutzen</div></div><div class="info-row"><div class="info-label"><span class="label-icon">👕</span><span class="label-text">Tenue</span></div><div class="info-value">Wit shirt / Witte sokken</div></div><div class="info-row"><div class="info-label"><span class="label-icon">❌</span><span class="label-text">Afgemeld</span></div><div class="info-value" style="color:#888;font-weight:600">Luuk</div></div><div class="info-row info-row-note"><div class="info-label"><span class="label-icon">⚠</span><span class="label-text">Let op</span></div><div class="info-value info-value-note">Wedstrijdtafel Eveline en Hanka</div></div></div></div></div><div class="card"><div class="card-left" style="background:#F53D3D"><div class="date-num">26</div><div class="date-mon">SEP</div><div class="ha-badge">🚗 Uit</div></div><div class="card-right"><div class="opponent">Myra · MO10-Rood</div><div class="location">📍 Myra</div><div class="info-table"><div class="info-row"><div class="info-label"><span class="label-icon">📍</span><span class="label-text">Vertrek</span></div><div class="info-value">Haven van Heemstede (check app)</div></div><div class="info-row"><div class="info-label"><span class="label-icon">⏱</span><span class="label-text">Wedstrijd</span></div><div class="info-value">N.N.B.</div></div><div class="info-row"><div class="info-label"><span class="label-icon label-whistle"></span><span class="label-text">Fluiten</span></div><div class="info-value">Doutzen</div></div><div class="info-row"><div class="info-label"><span class="label-icon">🥅</span><span class="label-text">Keepen</span></div><div class="info-value">Mathilde</div></div><div class="info-row"><div class="info-label"><span class="label-icon">🍎</span><span class="label-text">Fruit</span></div><div class="info-value">Mathilde</div></div><div class="info-row"><div class="info-label"><span class="label-icon">🚗</span><span class="label-text">Rijden</span></div><div class="info-value">Doutzen · Mathilde · Nina</div></div><div class="info-row"><div class="info-label"><span class="label-icon">👕</span><span class="label-text">Tenue</span></div><div class="info-value">Wit shirt / Witte sokken</div></div><div class="info-row info-row-note"><div class="info-label"><span class="label-icon">⚠</span><span class="label-text">Let op</span></div><div class="info-value info-value-note">Uitsokken mee</div></div></div></div></div><div class="card"><div class="card-left" style="background:#007856"><div class="date-num">3</div><div class="date-mon">OKT</div><div class="ha-badge">🏠 Thuis</div></div><div class="card-right"><div class="opponent">VVV HC · MO10-Groen</div><div class="location">📍 MHC Alliance · Veld Z-5</div><div class="info-table"><div class="info-row"><div class="info-label"><span class="label-icon">🏠</span><span class="label-text">Verzamelen</span></div><div class="info-value">10:40</div></div><div class="info-row"><div class="info-label"><span class="label-icon">⏱</span><span class="label-text">Wedstrijd</span></div><div class="info-value">11:10</div></div><div class="info-row"><div class="info-label"><span class="label-icon label-whistle"></span><span class="label-text">Fluiten</span></div><div class="info-value">Ada</div></div><div class="info-row"><div class="info-label"><span class="label-icon">🥅</span><span class="label-text">Keepen</span></div><div class="info-value">Nina</div></div><div class="info-row"><div class="info-label"><span class="label-icon">🍎</span><span class="label-text">Fruit</span></div><div class="info-value">Nina</div></div><div class="info-row"><div class="info-label"><span class="label-icon">👕</span><span class="label-text">Tenue</span></div><div class="info-value">Wit shirt / Witte sokken</div></div></div></div></div></div>
   <div class="export-wrap">
     <button class="export-btn" onclick="window.exportPoster()">📸 Exporteer als afbeelding</button>
@@ -255,7 +257,7 @@ body{font-family:Arial,sans-serif;background:var(--gray-bg);color:var(--black);p
     </div>
     <div class="op-main">
       <div class="dugout" id="dugout">
-        <div class="dugout-section"><div class="dugout-label">Wissel</div><div class="dugout-slots" id="slots-wissel"><div class="dugout-speler wissel" id="speler-Rosie" data-name="Rosie"><div class="speler-circle">Ro</div><div class="speler-name">Rosie</div></div><div class="dugout-speler wissel" id="speler-Vivièn" data-name="Vivièn"><div class="speler-circle">Vi</div><div class="speler-name">Vivièn</div></div></div></div>
+        <div class="dugout-section"><div class="dugout-label">Wissel</div><div class="dugout-slots" id="slots-wissel"><div class="dugout-speler wissel" id="speler-Ada" data-name="Ada"><div class="speler-circle">Ad</div><div class="speler-name">Ada</div></div><div class="dugout-speler wissel" id="speler-Vivièn" data-name="Vivièn"><div class="speler-circle">Vi</div><div class="speler-name">Vivièn</div></div></div></div>
         <div class="dugout-section"><div class="dugout-label">Coach</div><div class="dugout-slots" id="slots-coach"><div class="dugout-speler coach" id="speler-Romy" data-name="Romy"><div class="speler-circle">Ro</div><div class="speler-name">Romy</div></div><div class="dugout-speler coach" id="speler-Luuk" data-name="Luuk"><div class="speler-circle">Lu</div><div class="speler-name">Luuk</div></div></div></div>
         <div class="dugout-section"><div class="dugout-label">Afgemeld</div><div class="dugout-slots" id="slots-afgemeld"></div></div>
       </div>
@@ -276,7 +278,7 @@ body{font-family:Arial,sans-serif;background:var(--gray-bg);color:var(--black);p
           <line x1="120" y1="6" x2="120" y2="294" stroke="white" stroke-width="1" stroke-dasharray="5,4" opacity="0.3"></line>
           <line x1="360" y1="6" x2="360" y2="294" stroke="white" stroke-width="1" stroke-dasharray="5,4" opacity="0.3"></line>
         </svg>
-      <div class="speler" id="speler-Ada" data-name="Ada" style="left: 32.7629%; top: 78.8614%;"><div class="speler-circle">Ad</div><div class="speler-name">Ada</div></div><div class="speler" id="speler-Doutzen" data-name="Doutzen" style="left: 61.5541%; top: 22.207%;"><div class="speler-circle">Do</div><div class="speler-name">Doutzen</div></div><div class="speler" id="speler-Faye" data-name="Faye" style="left: 81.7769%; top: 49.5136%;"><div class="speler-circle">Fa</div><div class="speler-name">Faye</div></div><div class="speler" id="speler-Isabel" data-name="Isabel" style="left: 4.31171%; top: 50.931%;"><div class="speler-circle">Is</div><div class="speler-name">Isabel</div></div><div class="speler" id="speler-Mathilde" data-name="Mathilde" style="left: 57.0833%; top: 50%;"><div class="speler-circle">Ma</div><div class="speler-name">Mathilde</div></div><div class="speler" id="speler-Nina" data-name="Nina" style="left: 33.3925%; top: 23.1638%;"><div class="speler-circle">Ni</div><div class="speler-name">Nina</div></div><div class="speler" id="speler-Noralie" data-name="Noralie" style="left: 62.0833%; top: 78%;"><div class="speler-circle">No</div><div class="speler-name">Noralie</div></div><div class="speler" id="speler-Renske" data-name="Renske" style="left: 38.2869%; top: 50.2328%;"><div class="speler-circle">Re</div><div class="speler-name">Renske</div></div></div>
+      <div class="speler" id="speler-Doutzen" data-name="Doutzen" style="left: 61.7366%; top: 23.3707%;"><div class="speler-circle">Do</div><div class="speler-name">Doutzen</div></div><div class="speler" id="speler-Faye" data-name="Faye" style="left: 73.4358%; top: 49.8627%;"><div class="speler-circle">Fa</div><div class="speler-name">Faye</div></div><div class="speler" id="speler-Isabel" data-name="Isabel" style="left: 15.0785%; top: 51.2801%;"><div class="speler-circle">Is</div><div class="speler-name">Isabel</div></div><div class="speler" id="speler-Mathilde" data-name="Mathilde" style="left: 55.4254%; top: 50%;"><div class="speler-circle">Ma</div><div class="speler-name">Mathilde</div></div><div class="speler" id="speler-Nina" data-name="Nina" style="left: 36.6366%; top: 23.3965%;"><div class="speler-circle">Ni</div><div class="speler-name">Nina</div></div><div class="speler" id="speler-Noralie" data-name="Noralie" style="left: 62.2076%; top: 79.5129%;"><div class="speler-circle">No</div><div class="speler-name">Noralie</div></div><div class="speler" id="speler-Renske" data-name="Renske" style="left: 41.3489%; top: 51.862%;"><div class="speler-circle">Re</div><div class="speler-name">Renske</div></div><div class="speler" id="speler-Rosie" data-name="Rosie" style="left: 36.8245%; top: 76.1428%;"><div class="speler-circle">Ro</div><div class="speler-name">Rosie</div></div></div>
     </div>
     <div class="op-hint">Sleep spelers · Tik cirkel voor foto</div>
   </div>
@@ -589,9 +591,40 @@ function makeCard(m){
   return'<div class="card"><div class="card-left" style="background:'+color+'"><div class="date-num">'+m.dag+'</div><div class="date-mon">'+m.maand.toUpperCase()+'</div><div class="ha-badge">'+(isThuis?"&#127968;":"&#128663;")+" "+label+'</div></div><div class="card-right"><div class="opponent">'+m.tegenstander+'</div><div class="location">&#128205; '+m.locatie+'</div><div class="info-table">'+rows+'</div></div></div>';
 }
 
+var MONTHS_MAP={"Jan":0,"Feb":1,"Mrt":2,"Apr":3,"Mei":4,"Jun":5,"Jul":6,"Aug":7,"Sep":8,"Okt":9,"Nov":10,"Dec":11};
+function matchDate(m){
+  var y=new Date().getFullYear();
+  return new Date(y, MONTHS_MAP[m.maand]||0, parseInt(m.dag)||1);
+}
 function renderMatches(matches){
   window._currentMatches=matches;
-  document.getElementById("matches-container").innerHTML=matches.map(makeCard).join("");
+  var today=new Date(); today.setHours(0,0,0,0);
+
+  // Sort all matches by date ascending
+  var sorted=matches.slice().sort(function(a,b){return matchDate(a)-matchDate(b);});
+
+  // Split into upcoming and past
+  var upcoming=sorted.filter(function(m){return matchDate(m)>=today;});
+  var past=sorted.filter(function(m){return matchDate(m)<today;});
+
+  // Render upcoming (normal)
+  document.getElementById("matches-container").innerHTML=upcoming.map(makeCard).join("");
+
+  // Render past (greyed out, reversed so most recent first)
+  var pastEl=document.getElementById("matches-past-container");
+  var pastLabel=document.getElementById("past-label");
+  if(past.length>0){
+    var pastReversed=past.slice().reverse();
+    pastEl.innerHTML=pastReversed.map(function(m){
+      var card=makeCard(m);
+      return card.replace('class="card"','class="card past"');
+    }).join("");
+    pastLabel.style.display="";
+  } else {
+    pastEl.innerHTML="";
+    pastLabel.style.display="none";
+  }
+
   document.getElementById("thuis-count").textContent=matches.filter(function(m){return m.type==="Thuis";}).length;
   document.getElementById("uit-count").textContent=matches.filter(function(m){return m.type==="Uit";}).length;
   document.getElementById("total-count").textContent=matches.length;
@@ -969,140 +1002,4 @@ if ('serviceWorker' in navigator) {
 </script>
 
 
-<script async="" src="/.netlify/scripts/hud?variant=public" data-nf-variant="public" data-netlify-site-id="04e11bf4-3450-47c4-88c6-221b224a6cac" data-app-host="app.netlify.com"></script>
-<iframe sandbox="allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox" id="nl-badge-frame" title="Powered by Netlify" srcdoc="&lt;!doctype html&gt;&lt;html&gt;&lt;head&gt;&lt;meta charset=&quot;utf-8&quot;&gt;&lt;style&gt;
-    :root{--nl-vw:1872px;--nl-vh:948px}
-    *{box-sizing:border-box}
-    html,body{margin:0;padding:0;background:transparent;overflow:hidden}
-    body{display:flex;align-items:flex-end;justify-content:flex-end;height:100vh;
-      padding:8px 18px 18px 8px;
-      font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:14px;line-height:1.5;color:#f4f9f9;-webkit-font-smoothing:antialiased}
-    .nl-wrap{display:flex;flex-direction:column;align-items:flex-end;gap:10px;width:max-content;max-width:calc(var(--nl-vw,100vw) - 26px)}
-    button{font-family:inherit;cursor:pointer}
-    :focus-visible{outline:2px solid #32e6e2;outline-offset:2px;border-radius:6px}
-    .nl-icon-btn{position:relative;flex:none;width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;border:1px solid transparent;background:transparent;color:#d5e3e6;transition:background .15s ease,color .15s ease}
-    .nl-icon-btn:hover{background:rgba(255,255,255,0.08);color:#f4f9f9}
-    .nl-tap::after{content:&quot;&quot;;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-      width:max(100%,44px);height:max(100%,44px)}
-    @keyframes nl-rise{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:none}}
-    @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition:none!important}}
-  
-      .nl-card{position:relative;display:none;width:min(340px,calc(var(--nl-vw,100vw) - 26px));max-height:calc(var(--nl-vh,100vh) - 84px);overflow-y:auto;background:linear-gradient(180deg,#132832 0%,#0e1e25 100%);border:1px solid rgba(255,255,255,0.09);border-radius:18px;padding:18px;transform-origin:bottom right;animation:nl-rise .3s cubic-bezier(.34,1.4,.4,1) both}
-      .nl-card.open{display:block}
-      .nl-card-close{position:absolute;top:10px;right:10px}
-      .nl-card h2{margin:0;padding-right:30px;font-size:16px;font-weight:750;letter-spacing:-0.015em;line-height:1.35}
-      .nl-card h2 em{font-style:normal;background:linear-gradient(90deg,#32e6e2,#4d7cfe,#9a6bff);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
-      .nl-card p{margin:8px 0 0;font-size:12.5px;color:#d5e3e6}
-      .nl-prompt{position:relative;margin-top:14px;background:#10222b;border:1px solid rgba(255,255,255,0.09);border-radius:14px;padding:10px 12px;transition:border-color .15s ease,box-shadow .15s ease}
-      .nl-prompt:focus-within{border-color:#05bdba;box-shadow:0 0 0 3px rgba(5,189,186,0.18)}
-      .nl-prompt textarea{display:block;width:100%;height:38px;resize:none;border:0;outline:none;background:transparent;color:#f4f9f9;font:inherit;font-size:13px;line-height:19px;padding:0 28px 0 0}
-      .nl-prompt textarea::placeholder{color:#a9bdc2}
-      .nl-send{position:absolute;right:9px;bottom:9px;width:24px;height:24px;flex:none;display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:50%;background:#05bdba;color:#02191b;transition:background .15s ease}
-      .nl-send:hover{background:#32e6e2}
-      @media (pointer: coarse){
-        .nl-prompt textarea{font-size:16px;line-height:21px;height:42px}
-      }
-      .nl-or{display:flex;align-items:center;gap:10px;margin:12px 0;font-size:10.5px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#a9bdc2}
-      .nl-or::before,.nl-or::after{content:&quot;&quot;;flex:1;height:1px;background:rgba(255,255,255,0.09)}
-      .nl-drop{display:flex;align-items:center;justify-content:space-between;gap:6px;text-decoration:none;background:#1b3a45;border:1px solid rgba(255,255,255,0.09);border-radius:10px;padding:10px 12px;font-size:13px;font-weight:600;color:#cfe0e3;transition:background .15s ease,color .15s ease,border-color .15s ease}
-      .nl-drop:hover{background:#224753;color:#f4f9f9;border-color:rgba(50,230,226,0.3)}
-      .nl-drop .nl-arrow{transition:transform .18s cubic-bezier(.34,1.4,.4,1)}
-      .nl-drop:hover .nl-arrow{transform:translateX(3px)}
-      .nl-badge{display:flex;align-items:center;gap:9px;white-space:nowrap;border:1px solid rgba(255,255,255,0.09);background:linear-gradient(180deg,#142b34,#0e1e25);color:#f4f9f9;border-radius:999px;padding:9px 14px 9px 11px;font-size:13px;font-weight:600;letter-spacing:0.01em;transition:border-color .2s ease}
-      .nl-badge:hover{border-color:rgba(50,230,226,0.26)}
-      .nl-hide{display:block;width:100%;margin-top:10px;border:0;background:transparent;color:#a9bdc2;font-size:11.5px;font-weight:600;padding:4px;border-radius:8px;transition:color .15s ease}
-      .nl-hide:hover{color:#d5e3e6;text-decoration:underline}
-      .nl-badge-label{color:#d5e3e6;font-weight:500}
-      .nl-badge-brand{font-weight:750}
-    &lt;/style&gt;&lt;/head&gt;&lt;body&gt;
-      &lt;div class=&quot;nl-wrap&quot;&gt;
-        &lt;section class=&quot;nl-card&quot; id=&quot;nl-card&quot; aria-label=&quot;Build your own site on Netlify&quot;&gt;
-          &lt;button type=&quot;button&quot; class=&quot;nl-icon-btn nl-tap nl-card-close&quot; id=&quot;nl-card-close&quot; aria-label=&quot;Close&quot;&gt;&lt;svg width=&quot;14&quot; height=&quot;14&quot; viewBox=&quot;0 0 16 16&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;1.9&quot; stroke-linecap=&quot;round&quot; aria-hidden=&quot;true&quot;&gt;&lt;path d=&quot;M4.5 4.5 11.5 11.5M11.5 4.5 4.5 11.5&quot;/&gt;&lt;/svg&gt;&lt;/button&gt;
-          &lt;h2&gt;&lt;em&gt;Build your own site with Netlify&lt;/em&gt;&lt;/h2&gt;
-          &lt;p&gt;Describe what you want, and an AI agent designs, builds and deploys it in minutes.&lt;/p&gt;
-          &lt;form class=&quot;nl-prompt&quot; action=&quot;https://app.netlify.com/start&quot; method=&quot;get&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;
-            &lt;textarea name=&quot;prompt&quot; rows=&quot;2&quot; required maxlength=&quot;300&quot; autocomplete=&quot;off&quot;
-                      enterkeyhint=&quot;go&quot;
-                      placeholder=&quot;A shop for my handmade surfboards&amp;hellip;&quot;
-                      aria-label=&quot;Describe the site you want to build&quot;&gt;&lt;/textarea&gt;
-            &lt;button type=&quot;submit&quot; class=&quot;nl-send nl-tap&quot; aria-label=&quot;Build this site&quot;&gt;&lt;svg width=&quot;13&quot; height=&quot;13&quot; viewBox=&quot;0 0 16 16&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;1.8&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot; aria-hidden=&quot;true&quot;&gt;&lt;path d=&quot;M8 12.75v-9.5M3.9 7.35 8 3.25l4.1 4.1&quot;/&gt;&lt;/svg&gt;&lt;/button&gt;
-            &lt;input type=&quot;hidden&quot; name=&quot;utm_source&quot; value=&quot;netlify_badge&quot;&gt;
-            
-            &lt;input type=&quot;hidden&quot; name=&quot;utm_id&quot; value=&quot;04e11bf4-3450-47c4-88c6-221b224a6cac&quot;&gt;
-          &lt;/form&gt;
-          &lt;div class=&quot;nl-or&quot;&gt;&lt;span&gt;or&lt;/span&gt;&lt;/div&gt;
-          &lt;a class=&quot;nl-drop&quot; href=&quot;https://app.netlify.com/drop?utm_source=netlify_badge&amp;utm_id=04e11bf4-3450-47c4-88c6-221b224a6cac&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;
-            &lt;span&gt;Drop a site you already have&lt;/span&gt;&lt;span class=&quot;nl-arrow&quot; aria-hidden=&quot;true&quot;&gt;&amp;rarr;&lt;/span&gt;
-          &lt;/a&gt;
-          &lt;button type=&quot;button&quot; class=&quot;nl-hide&quot; id=&quot;nl-hide&quot;&gt;Hide this badge&lt;/button&gt;
-        &lt;/section&gt;
-        &lt;button type=&quot;button&quot; class=&quot;nl-badge&quot; id=&quot;nl-badge&quot; aria-expanded=&quot;false&quot; aria-controls=&quot;nl-card&quot;
-                aria-label=&quot;Powered by Netlify — build your own site&quot;&gt;
-          &lt;svg width=&quot;18&quot; height=&quot;18&quot; viewBox=&quot;0 0 32 32&quot; fill=&quot;none&quot; aria-hidden=&quot;true&quot;&gt;
-    &lt;path fill=&quot;#fff&quot; d=&quot;M17.9922 18.3225H14.005L13.6746 17.9921V14.005L14.005 13.6746H17.9922L18.3226 14.005V17.9921L17.9922 18.3225Z&quot;/&gt;
-    &lt;g fill=&quot;#05BDBA&quot;&gt;
-      &lt;path d=&quot;M9.6958 24.3311H9.35705L7.6661 22.6401V22.3041L10.2511 19.7164L12.042 19.7191L12.2808 19.9552V21.7461L9.6958 24.3311Z&quot;/&gt;
-      &lt;path d=&quot;M7.6661 9.69576V9.35701L9.35705 7.66606H9.6958L12.2808 10.2511V12.0392L12.042 12.2808H10.2511L7.6661 9.69576Z&quot;/&gt;
-      &lt;path d=&quot;M10.0457 17.4369H0.205466L0 17.2314V14.7658L0.205466 14.5603H10.0457L10.2511 14.7658V17.2314L10.0457 17.4369Z&quot;/&gt;
-      &lt;path d=&quot;M31.7945 17.4369H21.9544L21.7489 17.2314V14.7658L21.9544 14.5603H31.7945L32 14.7658V17.2314L31.7945 17.4369Z&quot;/&gt;
-      &lt;path d=&quot;M14.5631 10.0456V2.66547L14.7686 2.46001H17.2343L17.4396 2.66547V10.0456L17.2343 10.2511H14.7686L14.5631 10.0456Z&quot;/&gt;
-      &lt;path d=&quot;M14.5631 29.3316V21.9515L14.7686 21.746H17.2343L17.4396 21.9515V29.3316L17.2343 29.5371H14.7686L14.5631 29.3316Z&quot;/&gt;
-    &lt;/g&gt;&lt;/svg&gt;
-          &lt;span&gt;&lt;span class=&quot;nl-badge-label&quot;&gt;Powered by&lt;/span&gt; &lt;span class=&quot;nl-badge-brand&quot;&gt;Netlify&lt;/span&gt;&lt;/span&gt;
-        &lt;/button&gt;
-      &lt;/div&gt;
-      &lt;script&gt;
-        
-    function nlSend(){
-      var wrap=document.querySelector('.nl-wrap'),boxes=[];
-      for(var i=0;i&lt;wrap.children.length;i++){
-        var c=wrap.children[i];
-        if(!c.offsetWidth||!c.offsetHeight)continue;
-        boxes.push({x:c.offsetLeft-wrap.offsetLeft+8,
-                    y:c.offsetTop-wrap.offsetTop+8,
-                    w:c.offsetWidth,h:c.offsetHeight});
-      }
-      parent.postMessage({nlHud:'resize',
-        width:wrap.offsetWidth+26,
-        height:wrap.offsetHeight+26,
-        boxes:boxes},'*');
-    }
-    function nlSendSoon(){requestAnimationFrame(nlSend);}
-    window.addEventListener('load',nlSend);
-    window.addEventListener('message',function(e){
-      if(e.source!==parent||!e.data||e.data.nlHud!=='viewport')return;
-      var s=document.documentElement.style;
-      s.setProperty('--nl-vw',e.data.w+'px');
-      s.setProperty('--nl-vh',e.data.h+'px');
-      document.documentElement.classList.toggle('nl-narrow',e.data.w&lt;600);
-      nlSendSoon();
-    });
-    var nlCoarse=window.matchMedia('(pointer: coarse)').matches;
-    function nlSubmit(form){
-      if(form.requestSubmit)return form.requestSubmit();
-      if(form.checkValidity&amp;&amp;!form.checkValidity())
-        return form.reportValidity&amp;&amp;form.reportValidity();
-      form.submit();
-    }
-  
-        var badge=document.getElementById('nl-badge'),card=document.getElementById('nl-card'),
-            box=card.querySelector('textarea');
-        function setOpen(open){
-          card.classList.toggle('open',open);
-          badge.setAttribute('aria-expanded',open?'true':'false');
-          nlSendSoon();
-          if(open&amp;&amp;!nlCoarse)box.focus();
-        }
-        box.addEventListener('keydown',function(e){
-          if(e.key==='Enter'&amp;&amp;!e.shiftKey){e.preventDefault();nlSubmit(box.form);}
-        });
-        badge.addEventListener('click',function(){setOpen(!card.classList.contains('open'));});
-        document.getElementById('nl-card-close').addEventListener('click',function(){setOpen(false);badge.focus();});
-        document.addEventListener('keydown',function(e){
-          if(e.key==='Escape'&amp;&amp;card.classList.contains('open')){setOpen(false);badge.focus();}
-        });
-        document.getElementById('nl-hide').addEventListener('click',function(){
-          parent.postMessage({nlHud:'state',value:'hidden'},'*');
-        });
-      &lt;/script&gt;
-    &lt;/body&gt;&lt;/html&gt;" style="position: fixed; bottom: 0px; right: 0px; border: 0px; margin: 0px; padding: 0px; background: transparent; z-index: 2147483645; width: 197px; height: 64px; clip-path: path(&quot;M 3 3 H 184 V 51 H 3 Z&quot;);" data-nl-ready="1"></iframe><object id="__symantecPKIClientMessenger" data-supports-flavor-configuration="true" data-extension-version="0.5.0.109" style="display: none;"></object><span id="__symantecPKIClientDetector" style="display: none;">__PRESENT</span></body></html>
+</body></html>
