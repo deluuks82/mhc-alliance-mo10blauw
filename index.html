@@ -762,14 +762,12 @@ function makeDugoutDraggable(el,name,zone){
   el.addEventListener("touchend",function(){onEnd();});
 }
 function initOpstelling(){
-  // First load from SAVED_POSITIONS (baked into HTML on download)
+  // Load from HTML-baked positions (set via downloadHTML)
   if(Object.keys(SAVED_POSITIONS).length>0){
     spelerPositions=JSON.parse(JSON.stringify(SAVED_POSITIONS));
   }
-  // Then override with localStorage if available (more recent)
+  // Override with localStorage if available (more recent changes)
   try{var s=localStorage.getItem("mo10-opstelling");if(s){var lsp=JSON.parse(s);Object.keys(lsp).forEach(function(k){spelerPositions[k]=lsp[k];});}}catch(e){}
-  // Sync back
-  Object.keys(spelerPositions).forEach(function(k){SAVED_POSITIONS[k]=spelerPositions[k];});
   requestAnimationFrame(function(){requestAnimationFrame(renderOpstelling);});
 }
 function loadSavedPhotos(){SPELERS_DEFAULT.forEach(function(sp){try{var p=localStorage.getItem("mo10-photos-"+sp.name);if(p)spelerPhotos[sp.name]=p;}catch(e){}});}
@@ -902,7 +900,7 @@ window.downloadHTML=function(){
   var sj=JSON.stringify(SPELERS_DEFAULT,null,2);
   var aj=JSON.stringify(ALLE_OUDERS);
   var tnj=JSON.stringify(window._teamNaam||"");
-  var pj=JSON.stringify(SAVED_POSITIONS);var posCount=Object.keys(SAVED_POSITIONS).length;console.log("Saving positions:",pj);
+  var pj=JSON.stringify(spelerPositions);
   var html=document.documentElement.outerHTML;
   // Update matches
   html=html.replace(/var DEFAULT_MATCHES=\[[^\]]*(?:\[[^\]]*\][^\]]*)*\];/,"var DEFAULT_MATCHES="+mj+";");
