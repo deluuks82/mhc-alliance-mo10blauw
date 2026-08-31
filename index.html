@@ -295,8 +295,7 @@ body{font-family:Arial,sans-serif;background:var(--gray-bg);color:var(--black);p
 ];</script>
 <script id="d-positions">var SAVED_POSITIONS={};</script>
 </head>
-<body><script>window.addEventListener("DOMContentLoaded",function(){document.querySelectorAll(".page").forEach(function(p){p.classList.remove("active");});document.querySelectorAll(".tab").forEach(function(t){t.classList.remove("active");});var ov=document.getElementById("page-overview");if(ov)ov.classList.add("active");var tabs=document.querySelectorAll(".tab");if(tabs[0])tabs[0].classList.add("active");});</script>
-<div class="tabs">
+<body><!--RESET--><div class="tabs">
   <button class="tab" onclick="window.showTab('overview',this)">📋 Overzicht</button>
   <button class="tab" onclick="window.showTab('opstelling',this)">🏑 Opstelling</button>
   <button class="tab" onclick="window.showTab('spelregels',this)">📚 Spelregels</button>
@@ -811,7 +810,7 @@ window.closeFotoPanel=function(){document.getElementById("foto-overlay").classLi
 function renderFotoGrid(){var grid=document.getElementById("foto-grid");if(!grid)return;var sp=SPELERS_DEFAULT.filter(function(s){return s.zone!=="coach";});grid.innerHTML=sp.map(function(s){var p=spelerPhotos[s.name];var inner=p?'<img src="'+p+'" alt="'+s.name+'">':s.initials;return'<div class="foto-item" onclick="triggerPhotoUpload(\'' + s.name + '\')">' + '<div class="foto-item-circle">'+inner+'<div class="foto-add-badge">'+(p?"v":"+")+' </div></div><div class="foto-item-name">'+s.name+'</div></div>';}).join("");}
 function updateSpelersFromExcel(namen,coachNamen){
   // Default field positions for 8v8: keeper, 2 def, 2 mid, 2 fwd, 1 attacker
-  var defPos=[{sx:15,sy:150},{sx:154,sy:75},{sx:154,sy:225},{sx:202,sy:150},{sx:274,sy:150},{sx:298,sy:66},{sx:298,sy:234},{sx:360,sy:150}];
+  var defPos=[{sx:22,sy:215},{sx:176,sy:108},{sx:176,sy:322},{sx:231,sy:215},{sx:314,sy:215},{sx:341,sy:95},{sx:341,sy:335},{sx:412,sy:215}];
   var newSp=namen.map(function(naam,i){
     var init=naam.length>=2?naam.substring(0,2):naam[0]+naam[0].toLowerCase();
     var zone=i<8?"veld":"wissel";
@@ -920,7 +919,6 @@ window.generateOverview=function(){
 };
 window.downloadHTML=function(){
   var html=document.documentElement.outerHTML;
-  var mEnd=';<\/script>';
 
   // Update matches
   var mNew=JSON.stringify(pendingMatches||window._currentMatches||DEFAULT_MATCHES);
@@ -937,9 +935,14 @@ window.downloadHTML=function(){
   // Update team name
   html=html.replace(/window\._teamNaam="[^"]*";/,'window._teamNaam="'+(window._teamNaam||"")+'";');
 
-  // Reset to overview on open
-  var rs='<scr'+'ipt>window.addEventListener("DOMContentLoaded",function(){document.querySelectorAll(".page").forEach(function(p){p.classList.remove("active");});document.querySelectorAll(".tab").forEach(function(t){t.classList.remove("active");});var o=document.getElementById("page-overview");if(o)o.classList.add("active");var tabs=document.querySelectorAll(".tab");if(tabs[0])tabs[0].classList.add("active");});<\/scr'+'ipt>';
-  html=html.replace('<body>','<body>'+rs);
+  // Replace <!--RESET--> marker with reset script (works on every download, no stacking)
+  var rs='<script>window.addEventListener("DOMContentLoaded",function(){'+
+    'document.querySelectorAll(".page").forEach(function(p){p.classList.remove("active");});'+
+    'document.querySelectorAll(".tab").forEach(function(t){t.classList.remove("active");});'+
+    'var o=document.getElementById("page-overview");if(o)o.classList.add("active");'+
+    'var tabs=document.querySelectorAll(".tab");if(tabs[0])tabs[0].classList.add("active");'+
+    '});<\/script><!--RESET-->';
+  html=html.replace('<!--RESET-->',rs);
 
   var b=new Blob([html],{type:'text/html;charset=utf-8'});
   var u=URL.createObjectURL(b);
