@@ -71,7 +71,7 @@ body{font-family:Arial,sans-serif;background:var(--gray-bg);color:var(--black);p
 .dugout-slots{display:flex;flex-direction:column;align-items:center;gap:6px}
 .dugout-section+.dugout-section{border-top:1px solid rgba(255,255,255,.08);padding-top:.4rem}
 .dugout.dugout-hover{background:#1a3320;outline:2px solid var(--green)}
-.veld-wrap{position:relative;flex:1;background:#007856;overflow:hidden;touch-action:none;user-select:none;min-width:0}
+.veld-wrap{position:relative;flex:1;background:#007856;overflow:hidden;touch-action:none;user-select:none;min-width:0;aspect-ratio:55/43;max-height:100%}
 .veld-svg{width:100%;height:100%;display:block;pointer-events:none}
 .speler{position:absolute;display:flex;flex-direction:column;align-items:center;cursor:grab;touch-action:none;transform:translate(-50%,-50%);z-index:10}
 .speler:active{cursor:grabbing;z-index:20}
@@ -265,7 +265,7 @@ body{font-family:Arial,sans-serif;background:var(--gray-bg);color:var(--black);p
         <div class="dugout-section"><div class="dugout-label">Afgemeld</div><div class="dugout-slots" id="slots-afgemeld"></div></div>
       </div>
       <div class="veld-wrap" id="veld-wrap">
-        <svg class="veld-svg" viewBox="0 0 550 430" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <svg class="veld-svg" viewBox="0 0 550 430" xmlns="http://www.w3.org/2000/svg">
           <rect x="6" y="6" width="538" height="418" fill="none" stroke="white" stroke-width="2" opacity="0.6"/>
           <line x1="275" y1="6" x2="275" y2="424" stroke="white" stroke-width="1.5" opacity="0.6"/>
           <circle cx="275" cy="215" r="55" fill="none" stroke="white" stroke-width="1.5" opacity="0.6"/>
@@ -371,7 +371,7 @@ var MONTHS_NL=["Jan","Feb","Mrt","Apr","Mei","Jun","Jul","Aug","Sep","Okt","Nov"
 var SVG_W=550,SVG_H=430;
 var FLUITEN_UITGESLOTEN=[];
 var ALLE_OUDERS=["Ada","Doutzen","Faye","Isabel","Mathilde","Nina","Noralie","Renske","Rosie","Vivièn"].slice();
-var DEFAULT_MATCHES=[
+var DEFAULT_MATCHES=/*MATCHES*/[
   {
     "dag": "29",
     "maand": "Aug",
@@ -465,7 +465,7 @@ var DEFAULT_MATCHES=[
     "bijzonderheden": "",
     "tenue": "Wit shirt / Witte sokken"
   }
-];
+]/*ENDMATCHES*/;
 var SPELERS_DEFAULT=[
   {name:"Faye",initials:"Fa",zone:"veld",sx:17,sy:215},
   {name:"Doutzen",initials:"Do",zone:"veld",sx:176,sy:108},
@@ -822,40 +822,27 @@ window.generateOverview=function(){
   document.querySelectorAll(".tab")[0].classList.add("active");window.scrollTo(0,0);
 };
 window.downloadHTML=function(){
-  // Grab all current state
-  var mj=JSON.stringify(pendingMatches||window._currentMatches||DEFAULT_MATCHES,null,2);
-  var sj=JSON.stringify(SPELERS_DEFAULT,null,2);
-  var aj=JSON.stringify(ALLE_OUDERS);
-  var tnj=JSON.stringify(window._teamNaam||"");
-  var pj=JSON.stringify(spelerPositions);
-  // Get HTML
+  var state={
+    matches: JSON.stringify(pendingMatches||window._currentMatches||DEFAULT_MATCHES),
+    spelers: JSON.stringify(SPELERS_DEFAULT),
+    ouders:  JSON.stringify(ALLE_OUDERS),
+    naam:    window._teamNaam||"",
+    pos:     JSON.stringify(spelerPositions)
+  };
   var html=document.documentElement.outerHTML;
-  // 1. Update matches
-  html=html.replace(/var DEFAULT_MATCHES=\[[^\]]*(?:\[[^\]]*\][^\]]*)*\];/,"var DEFAULT_MATCHES="+mj+";");
-  // 2. Update spelers
-  html=html.replace(/var SPELERS_DEFAULT=\[[\s\S]*?\];/,"var SPELERS_DEFAULT="+sj+";");
-  // 3. Update team members
-  html=html.replace(/var ALLE_OUDERS=\[[\s\S]*?\]\.slice\(\);/,"var ALLE_OUDERS="+aj+".slice();");
-  // 4. Update team name
-  html=html.replace(/window\._teamNaam="[^"]*";/,"window._teamNaam="+tnj+";");
-  // 5. Update positions via marker
-  var marker='id="saved-positions">var SAVED_POSITIONS=';
-  var mi=html.indexOf(marker);
-  if(mi>=0){
-    var vi=html.indexOf('=',mi+marker.length-1)+1;
-    var ei=html.indexOf('<',vi);
-    if(ei>vi)html=html.substring(0,vi)+pj+html.substring(ei-1);
-  }
-  // 6. Reset to overview on open
-  var rs='<scr'+'ipt>window.addEventListener("DOMContentLoaded",function(){document.querySelectorAll(".page").forEach(function(p){p.classList.remove("active");});document.querySelectorAll(".tab").forEach(function(t){t.classList.remove("active");});var o=document.getElementById("page-overview");if(o)o.classList.add("active");var t=document.querySelectorAll(".tab");if(t[0])t[0].classList.add("active");});<'+'/script>';
-  html=html.replace("<body>","<body>"+rs);
+  // Replace each piece using split/join (no regex, no escaping issues)
+  html=html.split("/*MATCHES*/").join("/*MATCHES*/"+state.matches+"/*ENDMATCHES*/").split("/*ENDMATCHES*/").join("");
+  html=html.split("/*POS_START*/").join("/*POS_START*/"+state.pos+"/*POS_END*/REMOVE");
+  html=html.split("/*POS_END*/REMOVE").join("/*POS_END*/");
+  // Fix team name
+  html=html.replace(/window\._teamNaam="[^"]*";/,'window._teamNaam="'+state.naam+'";');
   // Download
   var b=new Blob([html],{type:"text/html;charset=utf-8"});
   var u=URL.createObjectURL(b);
   var a=document.createElement("a");
-  a.href=u;a.download="mhc-alliance-schema.html";
-  document.body.appendChild(a);a.click();
-  setTimeout(function(){document.body.removeChild(a);URL.revokeObjectURL(u);},1000);
+  a.href=u; a.download="mhc-alliance-schema.html";
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){document.body.removeChild(a);URL.revokeObjectURL(u);},500);
 }
 
 window.exportPoster=function(){
