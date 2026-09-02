@@ -138,8 +138,17 @@ body{font-family:Arial,sans-serif;background:var(--gray-bg);color:var(--black);p
 .dugout-speler.afgemeld .speler-circle{background:#4B0000;border-color:#F87171;opacity:0.75}
 .dugout-speler.afgemeld .speler-name{background:rgba(185,28,28,.7)}
 .op-hint{flex-shrink:0;font-size:8px;color:rgba(255,255,255,.3);text-align:center;padding:.2rem 0 .25rem;background:#0a0a0a}
-@media(orientation:portrait){.opstelling-page{height:calc(100vh - 42px);justify-content:center;align-items:center}.op-topbar,.op-main,.op-hint{display:none}.rotate-prompt{display:flex}}
-@media(orientation:landscape){.opstelling-page{height:calc(100vh - 42px)}.rotate-prompt{display:none}.op-topbar,.op-main{display:flex}.op-hint{display:block}}
+.opstelling-page{height:calc(100vh - 42px);height:calc(100dvh - 42px)}
+.rotate-prompt{display:none!important}
+/* Portrait: staand veld, doelen boven en onder. Spelers iets kleiner omdat het
+   veld dan smaller is dan in landscape. */
+@media(orientation:portrait){
+  .veld-wrap{width:100%;width:min(100cqw, calc(100cqh * 590 / 954));aspect-ratio:590 / 954}
+  .speler-circle{width:46px;height:46px;font-size:13px;border-width:2.5px}
+  .speler-name{font-size:8px;padding:1px 5px}
+  .pos-badge{min-width:21px;height:21px;font-size:12px;right:-8px}
+  .op-legend-item:last-child{display:none}
+}
 .rotate-prompt{display:none;flex-direction:column;align-items:center;justify-content:center;gap:1rem;padding:2rem;text-align:center}
 .rotate-icon{font-size:52px;animation:rotate-hint 1.8s ease-in-out infinite}
 @keyframes rotate-hint{0%{transform:rotate(0deg)}40%{transform:rotate(-90deg)}60%{transform:rotate(-90deg)}100%{transform:rotate(0deg)}}
@@ -253,7 +262,7 @@ body{font-family:Arial,sans-serif;background:var(--gray-bg);color:var(--black);p
 </style>
 <script id="d-matches">var DEFAULT_MATCHES=[{"dag":"29","maand":"Aug","type":"Uit","tegenstander":"HC Spaarndam · MO10-Rood","tijd_wedstrijd":"09:45","tijd_verzamelen":"08:45","locatie":"HC Spaarndam","plaats_verzamelen":"Haven van Heemstede","fluiten":"Noralie","keeper":"Faye","fruit":"Faye","rijden":["Isabel","Faye","Noralie"],"afgemeld":"","bijzonderheden":"","tenue":"Wit shirt / Witte sokken"},{"dag":"5","maand":"Sep","type":"Thuis","tegenstander":"Hurley · MO10-Groen","tijd_wedstrijd":"13:50","tijd_verzamelen":"13:20","locatie":"MHC Alliance · Veld Z-5","plaats_verzamelen":"MHC Alliance","fluiten":"Rosie","keeper":"Isabel","fruit":"Isabel","rijden":[],"afgemeld":"","bijzonderheden":"","tenue":"Wit shirt / Witte sokken"},{"dag":"19","maand":"Sep","type":"Thuis","tegenstander":"HC Haarlem · MO10-Rood","tijd_wedstrijd":"08:30","tijd_verzamelen":"08:00","locatie":"MHC Alliance · Veld Z-5","plaats_verzamelen":"MHC Alliance","fluiten":"Vivièn","keeper":"Doutzen","fruit":"Doutzen","rijden":[],"afgemeld":"Luuk","bijzonderheden":"Wedstrijdtafel Eveline en Hanka","tenue":"Wit shirt / Witte sokken"},{"dag":"26","maand":"Sep","type":"Uit","tegenstander":"Myra · MO10-Rood","tijd_wedstrijd":"N.N.B.","tijd_verzamelen":"","locatie":"Myra","plaats_verzamelen":"Haven van Heemstede","fluiten":"Doutzen","keeper":"Mathilde","fruit":"Mathilde","rijden":["Doutzen","Mathilde","Nina"],"afgemeld":"","bijzonderheden":"Uitsokken mee","tenue":"Wit shirt / Witte sokken"},{"dag":"3","maand":"Okt","type":"Thuis","tegenstander":"VVV HC · MO10-Groen","tijd_wedstrijd":"11:10","tijd_verzamelen":"10:40","locatie":"MHC Alliance · Veld Z-5","plaats_verzamelen":"MHC Alliance","fluiten":"Ada","keeper":"Nina","fruit":"Nina","rijden":[],"afgemeld":"","bijzonderheden":"","tenue":"Wit shirt / Witte sokken"}];</script>
 <script id="d-spelers">var BAKED_SPELERS=[{"name":"Ada","initials":"Ad","zone":"veld","sx":25,"sy":215,"pos":"Geen"},{"name":"Doutzen","initials":"Do","zone":"veld","sx":440,"sy":215,"pos":"Voor"},{"name":"Faye","initials":"Fa","zone":"veld","sx":280,"sy":215,"pos":"Midden / Voor"},{"name":"Isabel","initials":"Is","zone":"wissel","sx":0,"sy":0,"pos":"Midden / Voor"},{"name":"Mathilde","initials":"Ma","zone":"veld","sx":295,"sy":100,"pos":"Midden"},{"name":"Nina","initials":"Ni","zone":"veld","sx":140,"sy":105,"pos":"Achter"},{"name":"Noralie","initials":"No","zone":"veld","sx":295,"sy":330,"pos":"Midden"},{"name":"Renske","initials":"Re","zone":"wissel","sx":0,"sy":0,"pos":"Geen"},{"name":"Rosie","initials":"Ro","zone":"veld","sx":140,"sy":325,"pos":"Achter"},{"name":"Vivièn","initials":"Vi","zone":"veld","sx":185,"sy":215,"pos":"Achter"},{"name":"Romy","initials":"Ro","zone":"coach","sx":0,"sy":0,"pos":""},{"name":"Luuk","initials":"Lu","zone":"coach","sx":0,"sy":0,"pos":""}];</script>
-<script id="d-positions">var SAVED_POSITIONS={"Ada":{"zone":"veld","sx":221.7611,"sy":216.76730000000003},"Isabel":{"zone":"veld","sx":21.100288922646175,"sy":219.26279118303393},"Vivièn":{"zone":"wissel"},"Doutzen":{"zone":"veld","sx":345.63870000000003,"sy":104.54719},"Faye":{"zone":"veld","sx":425.73629999999997,"sy":218.97621},"Noralie":{"zone":"veld","sx":353.36455,"sy":321.16399},"Mathilde":{"zone":"veld","sx":318.76570000000004,"sy":215.31260999999998}};</script>
+<script id="d-positions">var SAVED_POSITIONS={"Ada":{"zone":"veld","sx":206.38365,"sy":218.97621},"Isabel":{"zone":"veld","sx":19.352852987023304,"sy":221.0300374062836},"Faye":{"zone":"veld","sx":343.2572,"sy":217.20890999999997},"Vivièn":{"zone":"wissel"}};</script>
 </head>
 <body><div class="tabs">
   <button class="tab active" onclick="window.showTab('overview',this)">📋 Overzicht</button>
@@ -320,7 +329,7 @@ body{font-family:Arial,sans-serif;background:var(--gray-bg);color:var(--black);p
       </div>
       <div class="veld-stage" id="veld-stage">
       <div class="veld-wrap" id="veld-wrap">
-        <svg class="veld-svg" viewBox="0 0 954 590" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <svg class="veld-svg" id="veld-svg" viewBox="0 0 954 590" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><g id="veld-g">
           <!-- Veld op echte verhoudingen: 91,4 x 55 m, 10 eenheden = 1 meter, 2m marge rondom -->
           <rect x="8" y="276.7" width="12" height="36.6" fill="none" stroke="white" stroke-width="2" opacity="0.45"></rect>
           <rect x="934" y="276.7" width="12" height="36.6" fill="none" stroke="white" stroke-width="2" opacity="0.45"></rect>
@@ -335,8 +344,8 @@ body{font-family:Arial,sans-serif;background:var(--gray-bg);color:var(--black);p
           <circle cx="84" cy="295" r="3" fill="white" opacity="0.6"></circle>
           <circle cx="870" cy="295" r="3" fill="white" opacity="0.6"></circle>
           <circle cx="477" cy="295" r="3" fill="white" opacity="0.45"></circle>
-        </svg>
-      <div class="speler" id="speler-Ada" data-name="Ada" style="left: 40.3202%; top: 50.411%;"><div class="speler-avatar"><div class="speler-circle">Ad</div><div class="pos-badge pb-geen">–</div></div><div class="speler-name">Ada</div></div><div class="speler lijn-voor" id="speler-Doutzen" data-name="Doutzen" style="left: 62.8434%; top: 24.3133%;"><div class="speler-avatar"><div class="speler-circle">Do</div><div class="pos-badge pb-voor">V</div></div><div class="speler-name">Doutzen</div></div><div class="speler lijn-midden" id="speler-Faye" data-name="Faye" style="left: 77.4066%; top: 50.9247%;"><div class="speler-avatar"><div class="speler-circle">Fa</div><div class="pos-badge pb-midden">M/V</div></div><div class="speler-name">Faye</div></div><div class="speler lijn-midden" id="speler-Isabel" data-name="Isabel" style="left: 3.83642%; top: 50.9913%;"><div class="speler-avatar"><div class="speler-circle">Is</div><div class="pos-badge pb-midden">M/V</div></div><div class="speler-name">Isabel</div></div><div class="speler lijn-midden" id="speler-Mathilde" data-name="Mathilde" style="left: 57.9574%; top: 50.0727%;"><div class="speler-avatar"><div class="speler-circle">Ma</div><div class="pos-badge pb-midden">M</div></div><div class="speler-name">Mathilde</div></div><div class="speler lijn-achter" id="speler-Nina" data-name="Nina" style="left: 25.4545%; top: 24.4186%;"><div class="speler-avatar"><div class="speler-circle">Ni</div><div class="pos-badge pb-achter">A</div></div><div class="speler-name">Nina</div></div><div class="speler lijn-midden" id="speler-Noralie" data-name="Noralie" style="left: 64.2481%; top: 74.6893%;"><div class="speler-avatar"><div class="speler-circle">No</div><div class="pos-badge pb-midden">M</div></div><div class="speler-name">Noralie</div></div><div class="speler lijn-achter" id="speler-Rosie" data-name="Rosie" style="left: 25.4545%; top: 75.5814%;"><div class="speler-avatar"><div class="speler-circle">Ro</div><div class="pos-badge pb-achter">A</div></div><div class="speler-name">Rosie</div></div></div>
+        </g></svg>
+      <div class="speler" id="speler-Ada" data-name="Ada" style="left: 37.5243%; top: 50.9247%;"><div class="speler-avatar"><div class="speler-circle">Ad</div><div class="pos-badge pb-geen">–</div></div><div class="speler-name">Ada</div></div><div class="speler lijn-voor" id="speler-Doutzen" data-name="Doutzen" style="left: 80%; top: 50%;"><div class="speler-avatar"><div class="speler-circle">Do</div><div class="pos-badge pb-voor">V</div></div><div class="speler-name">Doutzen</div></div><div class="speler lijn-midden" id="speler-Faye" data-name="Faye" style="left: 62.4104%; top: 50.5137%;"><div class="speler-avatar"><div class="speler-circle">Fa</div><div class="pos-badge pb-midden">M/V</div></div><div class="speler-name">Faye</div></div><div class="speler lijn-midden" id="speler-Isabel" data-name="Isabel" style="left: 3.5187%; top: 51.4023%;"><div class="speler-avatar"><div class="speler-circle">Is</div><div class="pos-badge pb-midden">M/V</div></div><div class="speler-name">Isabel</div></div><div class="speler lijn-midden" id="speler-Mathilde" data-name="Mathilde" style="left: 53.6364%; top: 23.2558%;"><div class="speler-avatar"><div class="speler-circle">Ma</div><div class="pos-badge pb-midden">M</div></div><div class="speler-name">Mathilde</div></div><div class="speler lijn-achter" id="speler-Nina" data-name="Nina" style="left: 25.4545%; top: 24.4186%;"><div class="speler-avatar"><div class="speler-circle">Ni</div><div class="pos-badge pb-achter">A</div></div><div class="speler-name">Nina</div></div><div class="speler lijn-midden" id="speler-Noralie" data-name="Noralie" style="left: 53.6364%; top: 76.7442%;"><div class="speler-avatar"><div class="speler-circle">No</div><div class="pos-badge pb-midden">M</div></div><div class="speler-name">Noralie</div></div><div class="speler lijn-achter" id="speler-Rosie" data-name="Rosie" style="left: 25.4545%; top: 75.5814%;"><div class="speler-avatar"><div class="speler-circle">Ro</div><div class="pos-badge pb-achter">A</div></div><div class="speler-name">Rosie</div></div></div>
       </div>
     </div>
     <div class="op-hint">
@@ -420,7 +429,7 @@ body{font-family:Arial,sans-serif;background:var(--gray-bg);color:var(--black);p
         <div class="format-row" style="margin-top:.35rem">Meerdere voorkeuren? Scheid ze met een <b>/</b>, bijvoorbeeld <b>Midden / Voor</b>. Geen voorkeur? Vul <b>Geen</b> in.</div>
       </div>
     </div>
-    <div class="app-version">Versie 4 · 2 september 2026 · letterbadges, voorkeurspositie, veldverhouding</div>
+    <div class="app-version">Versie 5 · 2 september 2026 · opstelling werkt nu ook staand</div>
     <div class="roster-card">
       <h3>Team &amp; voorkeurspositie</h3>
       <div class="roster-sub">Uit kolom A t/m C van het tabblad Team details</div>
@@ -766,8 +775,31 @@ function posRosterChips(pos){
   }).join("");
 }
 function getZone(name){var s=spelerPositions[name];if(s&&s.zone)return s.zone;var d=SPELERS_DEFAULT.find(function(x){return x.name===name;});return d?d.zone:"veld";}
-function svgToPercent(sx,sy){return{x:sx/SVG_W,y:sy/SVG_H};}
-function percentToSvg(px,py){return{sx:px*SVG_W,sy:py*SVG_H};}
+function isPortrait(){
+  try{return window.matchMedia("(orientation: portrait)").matches;}catch(e){return window.innerHeight>window.innerWidth;}
+}
+// Draait de veldtekening mee met de schermstand. De opgeslagen coordinaten
+// blijven hetzelfde, dus een opstelling die je staand maakt staat liggend goed.
+function setVeldOrientation(){
+  var svg=document.getElementById("veld-svg"),g=document.getElementById("veld-g");
+  if(!svg||!g)return;
+  if(isPortrait()){
+    svg.setAttribute("viewBox","0 0 590 954");
+    g.setAttribute("transform","translate(0,954) rotate(-90)");
+  }else{
+    svg.setAttribute("viewBox","0 0 954 590");
+    g.removeAttribute("transform");
+  }
+}
+// Liggend: sx loopt van links naar rechts. Staand: sx loopt van onder naar boven.
+function svgToPercent(sx,sy){
+  if(isPortrait())return{x:sy/SVG_H,y:1-(sx/SVG_W)};
+  return{x:sx/SVG_W,y:sy/SVG_H};
+}
+function percentToSvg(px,py){
+  if(isPortrait())return{sx:(1-py)*SVG_W,sy:px*SVG_H};
+  return{sx:px*SVG_W,sy:py*SVG_H};
+}
 function circleInner(sp){var p=spelerPhotos[sp.name];return p?'<img src="'+p+'" alt="'+sp.name+'">':sp.initials;}
 function createSpelerEl(sp,pos){var el=document.createElement("div");var lj=posLijn(sp.pos);el.className="speler"+(lj?" lijn-"+lj:"");el.id="speler-"+sp.name;el.dataset.name=sp.name;el.style.left=(pos.x*100)+"%";el.style.top=(pos.y*100)+"%";el.innerHTML='<div class="speler-avatar"><div class="speler-circle">'+circleInner(sp)+'</div>'+posBadge(sp.pos)+'</div><div class="speler-name">'+sp.name+'</div>';el.querySelector(".speler-circle").addEventListener("click",function(){if(el._wasDragged){el._wasDragged=false;return;}triggerPhotoUpload(sp.name);});return el;}
 function createDugoutEl(sp,zone){var el=document.createElement("div");var lj=zone==="coach"?"":posLijn(sp.pos);el.className="dugout-speler "+zone+(lj?" lijn-"+lj:"");el.id="speler-"+sp.name;el.dataset.name=sp.name;el.innerHTML='<div class="speler-avatar"><div class="speler-circle">'+circleInner(sp)+'</div>'+(zone==="coach"?"":posBadge(sp.pos))+'</div><div class="speler-name">'+sp.name+'</div>';el.querySelector(".speler-circle").addEventListener("click",function(){if(el._wasDragged){el._wasDragged=false;return;}triggerPhotoUpload(sp.name);});return el;}
@@ -782,6 +814,7 @@ function renderOpstelling(){
     return;
   }
   renderRetries=0;
+  setVeldOrientation();
   var veld=document.getElementById("veld-wrap"),slotW=document.getElementById("slots-wissel"),slotC=document.getElementById("slots-coach");
   if(!veld||!slotW||!slotC)return;
   veld.querySelectorAll(".speler").forEach(function(e){e.remove();});slotW.innerHTML="";slotC.innerHTML="";var slotAf=document.getElementById("slots-afgemeld");if(slotAf)slotAf.innerHTML="";
