@@ -1463,9 +1463,9 @@ window.deelOpstelling=function(){
   var SC=3,W=390,PAD=16;
   var GREEN="#007856",RED="#F53D3D",BLACK="#111111",WHITE="#ffffff",GRAY="#F7F7F5",MID="#888888";
   var EMOJI="'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',Arial";
-  var SAFE_TOP=30;              // ruimte voor de dynamic island
-  var HDR_H=SAFE_TOP+70;
-  var DY=20,ICON_W=20,LBLW=86;
+  var SAFE_TOP=72;              // ruim 1 cm extra ruimte voor de dynamic island
+  var HDR_H=SAFE_TOP+62;
+  var DY=17,ICON_W=20,LBLW=86;
 
   var lines=[];
   if(m){
@@ -1524,11 +1524,16 @@ window.deelOpstelling=function(){
     });
   });
 
-  var FIELD_H=Math.round(W*954/590);     // staand hockeyveld, echte verhouding
-  var INFO_H=PAD+Math.max(lines.length,1)*DY+PAD-4;
-  var FIELD_PAD=26;
-  var BENCH_H=wissels.length?88:0;
-  var totalH=HDR_H+INFO_H+FIELD_H+FIELD_PAD*2+BENCH_H;
+  var INFO_H=PAD+Math.max(lines.length,1)*DY+PAD-8;
+  var PAD_T=12,PAD_B=24;                 // groen boven/onder het veld (naam keeper past)
+  var BENCH_W=wissels.length?80:0;       // wisselbank als kolom naast het veld
+  var TARGET_H=Math.round(W*19.5/9);     // verhouding van een iPhone-scherm
+  var beschikbaar=TARGET_H-HDR_H-INFO_H-PAD_T-PAD_B;
+  var FIELD_W=Math.min(W-PAD*2-BENCH_W,beschikbaar*590/954);
+  FIELD_W=Math.max(FIELD_W,220);
+  var FIELD_H=Math.round(FIELD_W*954/590);  // staand hockeyveld, echte verhouding
+  var fieldX=Math.round((W-BENCH_W-FIELD_W)/2);
+  var totalH=HDR_H+INFO_H+PAD_T+FIELD_H+PAD_B;
 
   var canvas=document.createElement("canvas");
   canvas.width=W*SC;canvas.height=totalH*SC;
@@ -1548,18 +1553,18 @@ window.deelOpstelling=function(){
     // Kop
     ctx.fillStyle=BLACK;ctx.fillRect(0,0,W,HDR_H);
     ctx.fillStyle=GREEN;ctx.fillRect(0,HDR_H-3,W,3);
-    var LH=52,LW=LH;
+    var LH=46,LW=LH;
     if(logoImg&&logoImg.naturalWidth){
       LW=Math.round(LH*logoImg.naturalWidth/logoImg.naturalHeight);   // logo niet uitrekken
-      ctx.drawImage(logoImg,PAD,SAFE_TOP+6,LW,LH);
+      ctx.drawImage(logoImg,PAD,SAFE_TOP+4,LW,LH);
     }
     var tx=PAD+LW+12;
     ctx.textAlign="left";
-    ctx.fillStyle=GREEN;ctx.font="700 10px Arial";ctx.fillText("MHC ALLIANCE",tx,SAFE_TOP+18);
-    ctx.fillStyle=WHITE;ctx.font="900 24px Arial";ctx.fillText(window._teamNaam||"MO10 - Blauw",tx,SAFE_TOP+42);
+    ctx.fillStyle=GREEN;ctx.font="700 10px Arial";ctx.fillText("MHC ALLIANCE",tx,SAFE_TOP+14);
+    ctx.fillStyle=WHITE;ctx.font="900 22px Arial";ctx.fillText(window._teamNaam||"MO10 - Blauw",tx,SAFE_TOP+36);
     if(m){
       ctx.fillStyle=m.type==="Thuis"?"#3FBF8F":"#FF7A7A";ctx.font="700 11px Arial,'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji'";
-      ctx.fillText(m.dag+" "+m.maand+" \u00b7 "+(m.type==="Thuis"?"Thuiswedstrijd \uD83C\uDFE0":"Uitwedstrijd \uD83D\uDE97"),tx,SAFE_TOP+60);
+      ctx.fillText(m.dag+" "+m.maand+" \u00b7 "+(m.type==="Thuis"?"Thuiswedstrijd \uD83C\uDFE0":"Uitwedstrijd \uD83D\uDE97"),tx,SAFE_TOP+53);
     }
     // Wedstrijdinfo
     var ty=HDR_H+PAD+10;
@@ -1569,7 +1574,7 @@ window.deelOpstelling=function(){
         else{ctx.font="12px "+EMOJI;ctx.fillStyle=BLACK;ctx.fillText(row.e,PAD,ty);}
         ctx.fillStyle=MID;ctx.font="700 9px Arial";
         ctx.fillText(row.l.toUpperCase(),PAD+ICON_W,ty-1);
-        ctx.fillStyle=row.warn?"#B45309":BLACK;ctx.font=(row.warn?"700 ":"600 ")+"11.5px Arial";
+        ctx.fillStyle=row.warn?"#B45309":BLACK;ctx.font=(row.warn?"700 ":"600 ")+"11px Arial";
         var vx=PAD+ICON_W+LBLW,maxW=W-vx-PAD,v=String(row.v);
         while(ctx.measureText(v).width>maxW&&v.length>3)v=v.slice(0,-1);
         if(v!==String(row.v))v+="\u2026";
@@ -1582,15 +1587,15 @@ window.deelOpstelling=function(){
       ctx.textAlign="left";
     }
     // Veld met opstelling, zelf getekend in staande stand
-    ctx.fillStyle=GREEN;ctx.fillRect(0,HDR_H+INFO_H,W,FIELD_H+FIELD_PAD*2+BENCH_H);
-    var fieldY=HDR_H+INFO_H+FIELD_PAD;
+    ctx.fillStyle=GREEN;ctx.fillRect(0,HDR_H+INFO_H,W,PAD_T+FIELD_H+PAD_B);
+    var fieldY=HDR_H+INFO_H+PAD_T;
 
     // Lijnen overnemen uit de veldtekening van de app (landscape-coordinaten),
     // en die een kwartslag draaien: doel links wordt doel onder.
     var g=document.getElementById("veld-g");
     ctx.save();
-    ctx.translate(0,fieldY);
-    ctx.scale(W/590,FIELD_H/954);
+    ctx.translate(fieldX,fieldY);
+    ctx.scale(FIELD_W/590,FIELD_H/954);
     ctx.translate(0,954);
     ctx.rotate(-Math.PI/2);
     if(g)Array.prototype.forEach.call(g.children,function(n){
@@ -1617,10 +1622,10 @@ window.deelOpstelling=function(){
     var RING={keeper:"#FDE047",achter:"#60A5FA",midden:"#C4B5FD",voor:"#FB7185"};
     var BADGE={keeper:["#FDE047","#4A3200"],achter:["#60A5FA","#062B5C"],midden:["#C4B5FD","#33196B"],
                voor:["#FB7185","#57061C"],geen:["rgba(0,0,0,.55)","rgba(255,255,255,.8)"]};
-    var R=19;
+    var R=Math.round(Math.max(15,19*FIELD_W/390)),K=R/19;
 
     function tekenSpeler(sp,fotoImg){
-      var X=(sp.X!==undefined)?sp.X:sp.px*W,Y=(sp.Y!==undefined)?sp.Y:fieldY+sp.py*FIELD_H;
+      var X=(sp.X!==undefined)?sp.X:fieldX+sp.px*FIELD_W,Y=(sp.Y!==undefined)?sp.Y:fieldY+sp.py*FIELD_H;
       // schaduw
       ctx.save();ctx.shadowColor="rgba(0,0,0,.45)";ctx.shadowBlur=5;ctx.shadowOffsetY=2;
       ctx.beginPath();ctx.arc(X,Y,R,0,Math.PI*2);ctx.fillStyle=sp.wissel?"#92400E":"#005A40";ctx.fill();ctx.restore();
@@ -1631,7 +1636,7 @@ window.deelOpstelling=function(){
         ctx.drawImage(fotoImg,(fotoImg.naturalWidth-s)/2,(fotoImg.naturalHeight-s)/2,s,s,X-R,Y-R,R*2,R*2);
         ctx.restore();
       }else{
-        ctx.fillStyle=WHITE;ctx.font="800 13px Arial";ctx.textAlign="center";ctx.textBaseline="middle";
+        ctx.fillStyle=WHITE;ctx.font="800 "+Math.round(13*K)+"px Arial";ctx.textAlign="center";ctx.textBaseline="middle";
         ctx.fillText(sp.initials,X,Y+1);
       }
       // ring in lijnkleur
@@ -1640,8 +1645,8 @@ window.deelOpstelling=function(){
       // positiebadge
       if(sp.badge){
         var bc=BADGE[sp.badgeCls]||BADGE.geen;
-        ctx.font="900 9px Arial";
-        var bw=Math.max(16,ctx.measureText(sp.badge).width+9),bh=16;
+        ctx.font="900 "+Math.max(7.5,9*K).toFixed(1)+"px Arial";
+        var bh=Math.round(16*K),bw=Math.max(bh,ctx.measureText(sp.badge).width+8);
         var bx=X+R-6,by=Y-R-4;
         ctx.beginPath();
         if(ctx.roundRect)ctx.roundRect(bx-4,by,bw,bh,8);else ctx.rect(bx-4,by,bw,bh);
@@ -1652,27 +1657,27 @@ window.deelOpstelling=function(){
       }
       // naamlabel
       var naam=sp.name.toUpperCase();
-      ctx.font="800 8.5px Arial";
-      var nw=ctx.measureText(naam).width+12,ny=Y+R+5;
+      ctx.font="800 "+Math.max(7,8.5*K).toFixed(1)+"px Arial";
+      var nw=ctx.measureText(naam).width+10,ny=Y+R+4;
       ctx.beginPath();
-      if(ctx.roundRect)ctx.roundRect(X-nw/2,ny,nw,13,6.5);else ctx.rect(X-nw/2,ny,nw,13);
+      if(ctx.roundRect)ctx.roundRect(X-nw/2,ny,nw,12,6);else ctx.rect(X-nw/2,ny,nw,12);
       ctx.fillStyle="rgba(0,0,0,.65)";ctx.fill();
       ctx.fillStyle=WHITE;ctx.textAlign="center";ctx.textBaseline="middle";
-      ctx.fillText(naam,X,ny+7);
+      ctx.fillText(naam,X,ny+6.5);
       ctx.textBaseline="alphabetic";ctx.textAlign="left";
     }
 
     // Eerst alle foto's laden, dan pas tekenen en delen
     // Wisselbank onder het veld: posities in pixels berekenen
     if(wissels.length){
-      var benchTop=HDR_H+INFO_H+FIELD_H+FIELD_PAD*2;
-      ctx.strokeStyle="rgba(255,255,255,.35)";ctx.lineWidth=1;ctx.setLineDash([4,5]);
-      ctx.beginPath();ctx.moveTo(PAD,benchTop+2);ctx.lineTo(W-PAD,benchTop+2);ctx.stroke();ctx.setLineDash([]);
-      ctx.fillStyle="rgba(255,255,255,.75)";ctx.font="800 9px Arial";ctx.textAlign="left";ctx.textBaseline="alphabetic";
-      ctx.fillText("WISSEL",PAD,benchTop+18);
-      var gap=Math.min(76,(W-PAD*2-60)/wissels.length);
-      var startX=W/2-(gap*(wissels.length-1))/2;
-      wissels.forEach(function(sp,i){sp.X=startX+i*gap;sp.Y=benchTop+38;});
+      var bx0=fieldX+FIELD_W, benchCX=bx0+(W-bx0)/2;
+      ctx.strokeStyle="rgba(255,255,255,.3)";ctx.lineWidth=1;ctx.setLineDash([4,5]);
+      ctx.beginPath();ctx.moveTo(bx0+8,fieldY);ctx.lineTo(bx0+8,fieldY+FIELD_H);ctx.stroke();ctx.setLineDash([]);
+      ctx.fillStyle="rgba(255,255,255,.75)";ctx.font="800 9px Arial";ctx.textAlign="center";ctx.textBaseline="alphabetic";
+      ctx.fillText("WISSEL",benchCX+4,fieldY+12);
+      var gapY=Math.min(70,(FIELD_H-40)/wissels.length);
+      wissels.forEach(function(sp,i){sp.X=benchCX+4;sp.Y=fieldY+30+R+i*gapY;});
+      ctx.textAlign="left";
     }
     var alleSpelers=spelersOpVeld.concat(wissels);
     var wachten=alleSpelers.map(function(sp){
