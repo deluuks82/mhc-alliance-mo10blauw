@@ -109,6 +109,9 @@ body{font-family:Arial,sans-serif;background:var(--gray-bg);color:var(--black);p
 .op-btn-reset{background:rgba(255,255,255,.13);color:var(--white)}
 .op-btn-save{background:var(--green);color:var(--white)}
 .op-btn-foto{background:#1D4ED8;color:var(--white)}
+.op-btn-deel{background:#25D366;color:var(--white)}
+.wedstrijd-picker{background:rgba(255,255,255,.12);color:white;border:1px solid rgba(255,255,255,.25);border-radius:7px;font-size:10px;font-weight:700;padding:.28rem .4rem;cursor:pointer;max-width:125px;flex-shrink:1;min-width:0}
+.wedstrijd-picker option{background:#1a1a1a;color:white}
 .op-main{flex:1;display:flex;flex-direction:row;min-height:0;overflow:hidden}
 .dugout{width:62px;flex-shrink:0;background:#1a1a1a;border-right:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;padding:.3rem .2rem;gap:.4rem;overflow:hidden}
 .dugout-section{display:flex;flex-direction:column;align-items:center;gap:.25rem}
@@ -320,6 +323,8 @@ body{font-family:Arial,sans-serif;background:var(--gray-bg);color:var(--black);p
     <div class="op-topbar">
       <div class="op-title" id="op-title">MO10 - Blauw</div>
       <div class="op-actions">
+        <select class="wedstrijd-picker" id="wedstrijd-picker"><option value="-1">Kies wedstrijd&#8230;</option></select>
+        <button class="op-btn op-btn-deel" onclick="window.deelOpstelling()">&#128228; Deel</button>
         <button class="op-btn op-btn-foto" onclick="window.openFotoPanel()">📷 Foto's</button>
         <button class="op-btn op-btn-reset" onclick="window.resetOpstelling()">↻</button>
         <button class="op-btn op-btn-save" onclick="window.saveOpstelling()">Opslaan</button>
@@ -1425,6 +1430,271 @@ window.exportPoster=function(){
   }
 }
 
+
+// ---- WEDSTRIJD KIEZEN ----
+function fillPicker(){
+  var sel=document.getElementById("wedstrijd-picker");
+  if(!sel)return;
+  var vorige=sel.value;
+  var ms=window._currentMatches||DEFAULT_MATCHES;
+  sel.innerHTML='<option value="-1">Kies wedstrijd\u2026</option>';
+  var today=new Date();today.setHours(0,0,0,0);
+  var eerstvolgende=-1;
+  ms.forEach(function(m,i){
+    var opt=document.createElement("option");
+    opt.value=i;
+    opt.textContent=m.dag+" "+m.maand+" \u00b7 "+(m.tegenstander||"");
+    sel.appendChild(opt);
+    if(eerstvolgende<0&&matchDate(m)>=today)eerstvolgende=i;
+  });
+  // Standaard de eerstvolgende wedstrijd voorselecteren
+  if(vorige&&vorige!=="-1"&&parseInt(vorige)<ms.length)sel.value=vorige;
+  else if(eerstvolgende>=0)sel.value=String(eerstvolgende);
+  else if(ms.length)sel.value=String(ms.length-1);
+}
+
+// ---- OPSTELLING DELEN (info + veld in een afbeelding) ----
+window.deelOpstelling=function(){
+  var sel=document.getElementById("wedstrijd-picker");
+  var idx=sel?parseInt(sel.value):-1;
+  var ms=window._currentMatches||DEFAULT_MATCHES;
+  var m=(idx>=0&&idx<ms.length)?ms[idx]:null;
+
+  var SC=3,W=390,PAD=16;
+  var GREEN="#007856",RED="#F53D3D",BLACK="#111111",WHITE="#ffffff",GRAY="#F7F7F5",MID="#888888";
+  var EMOJI="'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',Arial";
+  var SAFE_TOP=30;              // ruimte voor de dynamic island
+  var HDR_H=SAFE_TOP+70;
+  var DY=20,ICON_W=20,LBLW=86;
+
+  var lines=[];
+  if(m){
+    var isT=m.type==="Thuis";
+    if(m.tegenstander)lines.push({e:"\uD83C\uDFD1",l:"Tegenstander",v:m.tegenstander});
+    if(m.locatie)lines.push({e:"\uD83D\uDCCD",l:"Locatie",v:m.locatie});
+    if(m.tijd_verzamelen&&m.tijd_verzamelen!=="N.N.B."){
+      var waar=m.plaats_verzamelen||(isT?"Alliance":"");
+      lines.push({e:"\uD83C\uDFE0",l:"Verzamelen",v:m.tijd_verzamelen+(waar?" bij "+waar:"")});
+    }else if(!isT&&m.plaats_verzamelen){
+      lines.push({e:"\uD83C\uDFE0",l:"Verzamelen",v:m.plaats_verzamelen+" (tijd volgt)"});
+    }
+    if(m.tijd_wedstrijd)lines.push({e:"\u23F1\uFE0F",l:"Wedstrijd",v:m.tijd_wedstrijd});
+    if(m.fluiten)lines.push({whistle:true,l:"Fluiten",v:m.fluiten});
+    if(m.keeper)lines.push({e:"\uD83E\uDD45",l:"Keepen",v:m.keeper});
+    if(m.fruit)lines.push({e:"\uD83C\uDF4E",l:"Fruit",v:m.fruit});
+    if(m.tenue)lines.push({e:"\uD83D\uDC55",l:"Tenue",v:m.tenue});
+    if(m.rijden&&m.rijden.length)lines.push({e:"\uD83D\uDE95",l:"Rijden",v:m.rijden.join(" \u00b7 ")});
+    if(m.afgemeld)lines.push({e:"\u274C",l:"Afgemeld",v:m.afgemeld});
+    if(m.bijzonderheden)lines.push({e:"\uD83D\uDEA8",l:"Let op",v:m.bijzonderheden,warn:true});
+  }
+
+  // Speelsters op het veld en op de wisselbank uitlezen
+  var veld=document.getElementById("veld-wrap");
+  var staand=isPortrait();
+  var spelersOpVeld=[];
+  if(veld)veld.querySelectorAll(".speler").forEach(function(el){
+    var l=parseFloat(el.style.left)/100,t=parseFloat(el.style.top)/100;
+    if(isNaN(l)||isNaN(t))return;
+    // Omrekenen naar het staande veld (doelen boven en onder)
+    var px=staand?l:t, py=staand?t:1-l;
+    var circ=el.querySelector(".speler-circle"),badge=el.querySelector(".pos-badge");
+    var lijn=(el.className.match(/lijn-(\w+)/)||[])[1]||"";
+    spelersOpVeld.push({
+      name:el.dataset.name||"",
+      initials:circ?circ.textContent.trim():"",
+      foto:spelerPhotos[el.dataset.name]||null,
+      lijn:lijn,
+      badge:badge?badge.textContent.trim():"",
+      badgeCls:badge?((badge.className.match(/pb-(\w+)/)||[])[1]||"geen"):"",
+      px:px,py:py
+    });
+  });
+  var wissels=[];
+  var sw=document.getElementById("slots-wissel");
+  if(sw)sw.querySelectorAll("[data-name]").forEach(function(el){
+    var circ=el.querySelector(".speler-circle"),badge=el.querySelector(".pos-badge");
+    wissels.push({
+      name:el.dataset.name||"",
+      initials:circ?circ.textContent.trim():"",
+      foto:spelerPhotos[el.dataset.name]||null,
+      lijn:(el.className.match(/lijn-(\w+)/)||[])[1]||"",
+      badge:badge?badge.textContent.trim():"",
+      badgeCls:badge?((badge.className.match(/pb-(\w+)/)||[])[1]||"geen"):"",
+      wissel:true
+    });
+  });
+
+  var FIELD_H=Math.round(W*954/590);     // staand hockeyveld, echte verhouding
+  var INFO_H=PAD+Math.max(lines.length,1)*DY+PAD-4;
+  var FIELD_PAD=26;
+  var BENCH_H=wissels.length?88:0;
+  var totalH=HDR_H+INFO_H+FIELD_H+FIELD_PAD*2+BENCH_H;
+
+  var canvas=document.createElement("canvas");
+  canvas.width=W*SC;canvas.height=totalH*SC;
+  var ctx=canvas.getContext("2d");ctx.scale(SC,SC);
+
+  // Klein scheidsrechtersfluitje, getekend (er bestaat geen fluit-emoji)
+  function drawWhistle(x,y){
+    ctx.save();ctx.fillStyle=MID;ctx.strokeStyle=MID;ctx.lineWidth=1.2;
+    ctx.beginPath();ctx.arc(x+5,y-3,4.5,0,Math.PI*2);ctx.fill();
+    ctx.fillRect(x+7,y-7,9,4);
+    ctx.fillStyle=WHITE;ctx.beginPath();ctx.arc(x+5,y-3,1.7,0,Math.PI*2);ctx.fill();
+    ctx.restore();
+  }
+
+  function doCanvas(logoImg){
+    ctx.fillStyle=GRAY;ctx.fillRect(0,0,W,totalH);
+    // Kop
+    ctx.fillStyle=BLACK;ctx.fillRect(0,0,W,HDR_H);
+    ctx.fillStyle=GREEN;ctx.fillRect(0,HDR_H-3,W,3);
+    var LH=52,LW=LH;
+    if(logoImg&&logoImg.naturalWidth){
+      LW=Math.round(LH*logoImg.naturalWidth/logoImg.naturalHeight);   // logo niet uitrekken
+      ctx.drawImage(logoImg,PAD,SAFE_TOP+6,LW,LH);
+    }
+    var tx=PAD+LW+12;
+    ctx.textAlign="left";
+    ctx.fillStyle=GREEN;ctx.font="700 10px Arial";ctx.fillText("MHC ALLIANCE",tx,SAFE_TOP+18);
+    ctx.fillStyle=WHITE;ctx.font="900 24px Arial";ctx.fillText(window._teamNaam||"MO10 - Blauw",tx,SAFE_TOP+42);
+    if(m){
+      ctx.fillStyle=m.type==="Thuis"?"#3FBF8F":"#FF7A7A";ctx.font="700 11px Arial,'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji'";
+      ctx.fillText(m.dag+" "+m.maand+" \u00b7 "+(m.type==="Thuis"?"Thuiswedstrijd \uD83C\uDFE0":"Uitwedstrijd \uD83D\uDE97"),tx,SAFE_TOP+60);
+    }
+    // Wedstrijdinfo
+    var ty=HDR_H+PAD+10;
+    if(lines.length){
+      lines.forEach(function(row){
+        if(row.whistle)drawWhistle(PAD,ty);
+        else{ctx.font="12px "+EMOJI;ctx.fillStyle=BLACK;ctx.fillText(row.e,PAD,ty);}
+        ctx.fillStyle=MID;ctx.font="700 9px Arial";
+        ctx.fillText(row.l.toUpperCase(),PAD+ICON_W,ty-1);
+        ctx.fillStyle=row.warn?"#B45309":BLACK;ctx.font=(row.warn?"700 ":"600 ")+"11.5px Arial";
+        var vx=PAD+ICON_W+LBLW,maxW=W-vx-PAD,v=String(row.v);
+        while(ctx.measureText(v).width>maxW&&v.length>3)v=v.slice(0,-1);
+        if(v!==String(row.v))v+="\u2026";
+        ctx.fillText(v,vx,ty);
+        ty+=DY;
+      });
+    }else{
+      ctx.fillStyle=MID;ctx.font="400 11px Arial";ctx.textAlign="center";
+      ctx.fillText("Kies bovenin een wedstrijd voor de wedstrijdinfo",W/2,HDR_H+INFO_H/2+4);
+      ctx.textAlign="left";
+    }
+    // Veld met opstelling, zelf getekend in staande stand
+    ctx.fillStyle=GREEN;ctx.fillRect(0,HDR_H+INFO_H,W,FIELD_H+FIELD_PAD*2+BENCH_H);
+    var fieldY=HDR_H+INFO_H+FIELD_PAD;
+
+    // Lijnen overnemen uit de veldtekening van de app (landscape-coordinaten),
+    // en die een kwartslag draaien: doel links wordt doel onder.
+    var g=document.getElementById("veld-g");
+    ctx.save();
+    ctx.translate(0,fieldY);
+    ctx.scale(W/590,FIELD_H/954);
+    ctx.translate(0,954);
+    ctx.rotate(-Math.PI/2);
+    if(g)Array.prototype.forEach.call(g.children,function(n){
+      var tag=n.tagName.toLowerCase();
+      function a(k,d){var v=n.getAttribute(k);return v===null?d:v;}
+      ctx.globalAlpha=parseFloat(a("opacity","1"));
+      ctx.lineWidth=parseFloat(a("stroke-width","1"))*1.3;
+      ctx.strokeStyle=a("stroke","none")==="none"?"transparent":a("stroke","white");
+      var fill=a("fill","none");
+      var dash=a("stroke-dasharray","");
+      ctx.setLineDash(dash?dash.split(/[ ,]+/).map(Number):[]);
+      var p=null;
+      if(tag==="rect"){p=new Path2D();p.rect(+a("x",0),+a("y",0),+a("width",0),+a("height",0));}
+      else if(tag==="line"){p=new Path2D();p.moveTo(+a("x1",0),+a("y1",0));p.lineTo(+a("x2",0),+a("y2",0));}
+      else if(tag==="circle"){p=new Path2D();p.arc(+a("cx",0),+a("cy",0),+a("r",0),0,Math.PI*2);}
+      else if(tag==="path"){try{p=new Path2D(a("d",""));}catch(e){}}
+      if(!p)return;
+      if(fill!=="none"){ctx.fillStyle=fill;ctx.fill(p);}
+      if(ctx.strokeStyle!=="transparent"&&a("stroke","none")!=="none")ctx.stroke(p);
+    });
+    ctx.restore();
+    ctx.globalAlpha=1;ctx.setLineDash([]);
+
+    var RING={keeper:"#FDE047",achter:"#60A5FA",midden:"#C4B5FD",voor:"#FB7185"};
+    var BADGE={keeper:["#FDE047","#4A3200"],achter:["#60A5FA","#062B5C"],midden:["#C4B5FD","#33196B"],
+               voor:["#FB7185","#57061C"],geen:["rgba(0,0,0,.55)","rgba(255,255,255,.8)"]};
+    var R=19;
+
+    function tekenSpeler(sp,fotoImg){
+      var X=(sp.X!==undefined)?sp.X:sp.px*W,Y=(sp.Y!==undefined)?sp.Y:fieldY+sp.py*FIELD_H;
+      // schaduw
+      ctx.save();ctx.shadowColor="rgba(0,0,0,.45)";ctx.shadowBlur=5;ctx.shadowOffsetY=2;
+      ctx.beginPath();ctx.arc(X,Y,R,0,Math.PI*2);ctx.fillStyle=sp.wissel?"#92400E":"#005A40";ctx.fill();ctx.restore();
+      // foto of initialen
+      if(fotoImg){
+        ctx.save();ctx.beginPath();ctx.arc(X,Y,R,0,Math.PI*2);ctx.clip();
+        var s=Math.min(fotoImg.naturalWidth,fotoImg.naturalHeight);
+        ctx.drawImage(fotoImg,(fotoImg.naturalWidth-s)/2,(fotoImg.naturalHeight-s)/2,s,s,X-R,Y-R,R*2,R*2);
+        ctx.restore();
+      }else{
+        ctx.fillStyle=WHITE;ctx.font="800 13px Arial";ctx.textAlign="center";ctx.textBaseline="middle";
+        ctx.fillText(sp.initials,X,Y+1);
+      }
+      // ring in lijnkleur
+      ctx.beginPath();ctx.arc(X,Y,R,0,Math.PI*2);
+      ctx.lineWidth=2.5;ctx.strokeStyle=RING[sp.lijn]||(sp.wissel?"#FCD34D":"rgba(255,255,255,.85)");ctx.stroke();
+      // positiebadge
+      if(sp.badge){
+        var bc=BADGE[sp.badgeCls]||BADGE.geen;
+        ctx.font="900 9px Arial";
+        var bw=Math.max(16,ctx.measureText(sp.badge).width+9),bh=16;
+        var bx=X+R-6,by=Y-R-4;
+        ctx.beginPath();
+        if(ctx.roundRect)ctx.roundRect(bx-4,by,bw,bh,8);else ctx.rect(bx-4,by,bw,bh);
+        ctx.fillStyle=bc[0];ctx.fill();
+        ctx.lineWidth=1.5;ctx.strokeStyle="rgba(0,0,0,.6)";ctx.stroke();
+        ctx.fillStyle=bc[1];ctx.textAlign="center";ctx.textBaseline="middle";
+        ctx.fillText(sp.badge,bx-4+bw/2,by+bh/2+0.5);
+      }
+      // naamlabel
+      var naam=sp.name.toUpperCase();
+      ctx.font="800 8.5px Arial";
+      var nw=ctx.measureText(naam).width+12,ny=Y+R+5;
+      ctx.beginPath();
+      if(ctx.roundRect)ctx.roundRect(X-nw/2,ny,nw,13,6.5);else ctx.rect(X-nw/2,ny,nw,13);
+      ctx.fillStyle="rgba(0,0,0,.65)";ctx.fill();
+      ctx.fillStyle=WHITE;ctx.textAlign="center";ctx.textBaseline="middle";
+      ctx.fillText(naam,X,ny+7);
+      ctx.textBaseline="alphabetic";ctx.textAlign="left";
+    }
+
+    // Eerst alle foto's laden, dan pas tekenen en delen
+    // Wisselbank onder het veld: posities in pixels berekenen
+    if(wissels.length){
+      var benchTop=HDR_H+INFO_H+FIELD_H+FIELD_PAD*2;
+      ctx.strokeStyle="rgba(255,255,255,.35)";ctx.lineWidth=1;ctx.setLineDash([4,5]);
+      ctx.beginPath();ctx.moveTo(PAD,benchTop+2);ctx.lineTo(W-PAD,benchTop+2);ctx.stroke();ctx.setLineDash([]);
+      ctx.fillStyle="rgba(255,255,255,.75)";ctx.font="800 9px Arial";ctx.textAlign="left";ctx.textBaseline="alphabetic";
+      ctx.fillText("WISSEL",PAD,benchTop+18);
+      var gap=Math.min(76,(W-PAD*2-60)/wissels.length);
+      var startX=W/2-(gap*(wissels.length-1))/2;
+      wissels.forEach(function(sp,i){sp.X=startX+i*gap;sp.Y=benchTop+38;});
+    }
+    var alleSpelers=spelersOpVeld.concat(wissels);
+    var wachten=alleSpelers.map(function(sp){
+      return new Promise(function(res){
+        if(!sp.foto){res(null);return;}
+        var im=new Image();im.onload=function(){res(im);};im.onerror=function(){res(null);};im.src=sp.foto;
+      });
+    });
+    Promise.all(wachten).then(function(fotos){
+      alleSpelers.forEach(function(sp,i){tekenSpeler(sp,fotos[i]);});
+      deelAfbeelding(canvas,"Opstelling-"+(m?(m.dag+"-"+m.maand):"MO10")+".jpg");
+    });
+  }
+  var img=getLogoImg();
+  if(img.complete&&img.naturalWidth)doCanvas(img);
+  else{img.onload=function(){doCanvas(img);};img.onerror=function(){doCanvas(null);};}
+};
+
+// Keuzelijst bijwerken zodra het programma (opnieuw) getekend wordt
+var _renderMatchesZonderPicker=renderMatches;
+renderMatches=function(matches){_renderMatchesZonderPicker(matches);fillPicker();};
+
 renderMatches(DEFAULT_MATCHES);
 renderTaken(DEFAULT_MATCHES);
 
@@ -1461,4 +1731,4 @@ if ('serviceWorker' in navigator) {
 </script>
 
 
-<object id="__symantecPKIClientMessenger" data-supports-flavor-configuration="true" data-extension-version="0.5.0.109" style="display: none;"></object><span id="__symantecPKIClientDetector" style="display: none;">__PRESENT</span></body></html>
+</body></html>
