@@ -118,7 +118,16 @@ body{font-family:Arial,sans-serif;background:var(--gray-bg);color:var(--black);p
 .dugout-label{font-size:7px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.35);text-align:center}
 .dugout-slots{display:flex;flex-direction:column;align-items:center;gap:6px}
 .dugout-section+.dugout-section{border-top:1px solid rgba(255,255,255,.08);padding-top:.4rem}
-.dugout.dugout-hover{background:#1a3320;outline:2px solid var(--green)}
+.dugout.dugout-hover{outline:1px dashed rgba(255,255,255,.25)}
+/* Wissel vult de vrije ruimte van de bank, zodat dat het grote sleepvak is */
+.dugout-section.sectie-wissel{flex:1 1 auto}
+.dugout-section{border-radius:8px;transition:background .12s}
+/* Het vak waar de speelster bij loslaten terechtkomt licht op */
+.dugout-section.drop-doel{background:rgba(0,120,86,.35);box-shadow:inset 0 0 0 1.5px var(--green)}
+.dugout-section.sectie-afgemeld.drop-doel{background:rgba(185,28,28,.32);box-shadow:inset 0 0 0 1.5px #F87171}
+.dugout-section.drop-doel .dugout-label{color:var(--white)}
+/* Leeg vak toont een stippelplek, zodat je ziet waar je kunt loslaten */
+#slots-wissel:empty,#slots-afgemeld:empty{width:44px;min-height:22px;border:1.5px dashed rgba(255,255,255,.18);border-radius:8px;box-sizing:border-box}
 .veld-stage{flex:1;min-width:0;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#0a0a0a;container-type:size}
 .veld-wrap{position:relative;background:#007856;overflow:hidden;touch-action:none;user-select:none;
   /* Vaste veldverhouding (954:590 = echte hockeyveldmaten 91,4m x 55m incl. marge).
@@ -138,6 +147,18 @@ body{font-family:Arial,sans-serif;background:var(--gray-bg);color:var(--black);p
 .dugout-speler{display:flex;flex-direction:column;align-items:center;cursor:grab;touch-action:none}
 .speler-circle{width:58px;height:58px;border-radius:50%;background:#005A40;border:3px solid rgba(255,255,255,.85);overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:var(--white);box-shadow:0 2px 6px rgba(0,0,0,.45);transition:box-shadow .15s}.dugout-speler .speler-circle{width:38px;height:38px;border-radius:50%;background:#005A40;border:2px solid rgba(255,255,255,.8);overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:var(--white);box-shadow:0 2px 4px rgba(0,0,0,.4);transition:box-shadow .15s}
 .speler.dragging .speler-circle{box-shadow:0 6px 18px rgba(0,0,0,.6);border-color:#FFD700}
+/* Vaste plekken: na loslaten glijdt de speelster kort naar haar plek */
+.speler.snap{transition:left .18s ease-out,top .18s ease-out}
+.plek-hulp{position:absolute;inset:0;pointer-events:none;z-index:5;display:none}
+.plek-hulp.aan{display:block}
+.plek-lijn{position:absolute;opacity:.55}
+.plek-lijn-h{left:0;right:0;height:0;border-top:1.5px dashed #FFD700}
+.plek-lijn-v{top:0;bottom:0;width:0;border-left:1.5px dashed #FFD700}
+.plek-doel{position:absolute;width:58px;height:58px;border-radius:50%;box-sizing:border-box;
+  border:2.5px dashed #FFD700;background:rgba(255,215,0,.12);transform:translate(-50%,-50%)}
+/* Staat er al iemand op de doelplek, dan laat de ring zien dat ze ruilen */
+.speler.ruil-doel .speler-circle{border-color:#FFD700;border-style:dashed}
+@media(prefers-reduced-motion:reduce){.speler.snap{transition:none}}
 .speler-circle img,.dugout-speler .speler-circle img{width:100%;height:100%;object-fit:cover}
 .speler-name{font-size:8.5px;font-weight:800;color:var(--white);background:rgba(0,0,0,.65);border-radius:20px;padding:2px 6px;margin-top:3px;white-space:nowrap;text-transform:uppercase;letter-spacing:.03em}.dugout-speler .speler-name{font-size:7px;font-weight:800;color:var(--white);background:rgba(0,0,0,.65);border-radius:20px;padding:1px 4px;margin-top:2px;white-space:nowrap;text-transform:uppercase;letter-spacing:.03em}
 .dugout-speler.wissel .speler-circle{background:#92400E;border-color:#FCD34D}
@@ -152,9 +173,21 @@ body{font-family:Arial,sans-serif;background:var(--gray-bg);color:var(--black);p
 @media(orientation:portrait){
   .veld-wrap{width:100%;width:min(100cqw, calc(100cqh * 590 / 954));aspect-ratio:590 / 954}
   .speler-circle{width:46px;height:46px;font-size:13px;border-width:2.5px}
+  .plek-doel{width:46px;height:46px}
   .speler-name{font-size:8px;padding:1px 5px}
   .pos-badge{min-width:21px;height:21px;font-size:12px;right:-8px}
   .op-legend-item:last-child{display:none}
+}
+/* Bank: scrollen als hij vol is, en compacter op een laag (liggend) scherm,
+   zodat ook Afgemeld altijd in beeld en bereikbaar blijft */
+.dugout{overflow-y:auto;scrollbar-width:none}
+.dugout::-webkit-scrollbar{display:none}
+@media(max-height:500px){
+  .dugout{gap:.25rem}
+  .dugout-slots{gap:4px}
+  .dugout-speler .speler-circle{width:30px;height:30px;font-size:9px}
+  .dugout-speler .pos-badge{min-width:15px;height:15px;font-size:9px;padding:0 3px}
+  #slots-wissel:empty,#slots-afgemeld:empty{min-height:18px}
 }
 .rotate-prompt{display:none;flex-direction:column;align-items:center;justify-content:center;gap:1rem;padding:2rem;text-align:center}
 .rotate-icon{font-size:52px;animation:rotate-hint 1.8s ease-in-out infinite}
@@ -269,7 +302,7 @@ body{font-family:Arial,sans-serif;background:var(--gray-bg);color:var(--black);p
 </style>
 <script id="d-matches">var DEFAULT_MATCHES=[{"dag":"29","maand":"Aug","type":"Uit","tegenstander":"HC Spaarndam · MO10-Rood","tijd_wedstrijd":"09:45","tijd_verzamelen":"08:45","locatie":"HC Spaarndam","plaats_verzamelen":"Haven van Heemstede","fluiten":"Noralie","keeper":"Faye","fruit":"Faye","rijden":["Isabel","Faye","Noralie"],"afgemeld":"","bijzonderheden":"","tenue":"Wit shirt / Witte sokken"},{"dag":"5","maand":"Sep","type":"Thuis","tegenstander":"Hurley · MO10-Groen","tijd_wedstrijd":"13:50","tijd_verzamelen":"13:20","locatie":"MHC Alliance · Veld Z-5","plaats_verzamelen":"MHC Alliance","fluiten":"Mathilde","keeper":"Isabel","fruit":"Isabel","rijden":[],"afgemeld":"","bijzonderheden":"","tenue":"Wit shirt / Witte sokken"},{"dag":"19","maand":"Sep","type":"Thuis","tegenstander":"HC Haarlem · MO10-Rood","tijd_wedstrijd":"08:30","tijd_verzamelen":"08:00","locatie":"MHC Alliance · Veld Z-5","plaats_verzamelen":"MHC Alliance","fluiten":"Vivièn","keeper":"Doutzen","fruit":"Doutzen","rijden":[],"afgemeld":"Luuk","bijzonderheden":"Wedstrijdtafel Eveline en Hanka","tenue":"Wit shirt / Witte sokken"},{"dag":"26","maand":"Sep","type":"Uit","tegenstander":"Myra · MO10-Rood","tijd_wedstrijd":"10:00","tijd_verzamelen":"09:00","locatie":"Myra","plaats_verzamelen":"Haven van Heemstede","fluiten":"Doutzen","keeper":"Nina","fruit":"Nina","rijden":["Doutzen","Mathilde","Nina"],"afgemeld":"","bijzonderheden":"Uitsokken mee","tenue":"Wit shirt / Witte sokken"},{"dag":"3","maand":"Okt","type":"Thuis","tegenstander":"VVV HC · MO10-Groen","tijd_wedstrijd":"11:10","tijd_verzamelen":"10:40","locatie":"MHC Alliance · Veld Z-5","plaats_verzamelen":"MHC Alliance","fluiten":"Rosie","keeper":"Mathilde","fruit":"Mathilde","rijden":[],"afgemeld":"Nina","bijzonderheden":"","tenue":"Wit shirt / Witte sokken"},{"dag":"24","maand":"Okt","type":"Thuis","tegenstander":"FIT · MO10-Roze","tijd_wedstrijd":"12:30","tijd_verzamelen":"12:00","locatie":"MHC Alliance · Veld Z-5","plaats_verzamelen":"MHC Alliance","fluiten":"Renske","keeper":"Ada","fruit":"Ada","rijden":[],"afgemeld":"","bijzonderheden":"","tenue":"Wit shirt / Witte sokken"},{"dag":"31","maand":"Okt","type":"Uit","tegenstander":"Spaarndam · MO10-Rood","tijd_wedstrijd":"09:00","tijd_verzamelen":"08:00","locatie":"Spaarndam","plaats_verzamelen":"Haven van Heemstede","fluiten":"Noralie","keeper":"Vivièn","fruit":"Vivièn","rijden":["Vivièn","Renske","Isabel"],"afgemeld":"Romy","bijzonderheden":"","tenue":"Wit shirt / Witte sokken"},{"dag":"7","maand":"Nov","type":"Thuis","tegenstander":"Bloemendaal · MO10-Wit","tijd_wedstrijd":"09:50","tijd_verzamelen":"09:20","locatie":"MHC Alliance · Veld Z-5","plaats_verzamelen":"MHC Alliance","fluiten":"Mathilde","keeper":"Renske","fruit":"Renske","rijden":[],"afgemeld":"","bijzonderheden":"Na de limonade clubhuisdienst voor het hele team (circa 15-20 minuten)","tenue":"Wit shirt / Witte sokken"},{"dag":"14","maand":"Nov","type":"Thuis","tegenstander":"Westerpark · MO10-Roze","tijd_wedstrijd":"11:45","tijd_verzamelen":"12:15","locatie":"MHC Alliance · Veld Z-5","plaats_verzamelen":"MHC Alliance","fluiten":"Nina","keeper":"Noralie","fruit":"Noralie","rijden":[],"afgemeld":"","bijzonderheden":"","tenue":"Wit shirt / Witte sokken"},{"dag":"21","maand":"Nov","type":"Uit","tegenstander":"Castricum · MO10-Roze","tijd_wedstrijd":"NNB","tijd_verzamelen":"NNB","locatie":"Castricum","plaats_verzamelen":"Haven van Heemstede","fluiten":"Ada","keeper":"Rosie","fruit":"Rosie","rijden":["Ada","Rosie","Faye"],"afgemeld":"","bijzonderheden":"","tenue":"Wit shirt / Witte sokken"}];</script>
 <script id="d-spelers">var BAKED_SPELERS=[{"name":"Ada","initials":"Ad","zone":"veld","sx":275,"sy":323,"pos":"Achter / Midden / Voor"},{"name":"Doutzen","initials":"Do","zone":"veld","sx":336,"sy":215,"pos":"Voor"},{"name":"Faye","initials":"Fa","zone":"veld","sx":25,"sy":215,"pos":"Midden / Voor"},{"name":"Isabel","initials":"Is","zone":"wissel","sx":0,"sy":0,"pos":"Midden / Voor"},{"name":"Mathilde","initials":"Ma","zone":"veld","sx":208,"sy":215,"pos":"Midden"},{"name":"Nina","initials":"Ni","zone":"veld","sx":97,"sy":215,"pos":"Achter"},{"name":"Noralie","initials":"No","zone":"veld","sx":275,"sy":107,"pos":"Midden"},{"name":"Renske","initials":"Re","zone":"veld","sx":143,"sy":107,"pos":"Achter"},{"name":"Rosie","initials":"Ro","zone":"wissel","sx":0,"sy":0,"pos":"Achter / Midden"},{"name":"Vivièn","initials":"Vi","zone":"veld","sx":143,"sy":323,"pos":"Achter"},{"name":"Romy","initials":"Ro","zone":"coach","sx":0,"sy":0,"pos":""},{"name":"Luuk","initials":"Lu","zone":"coach","sx":0,"sy":0,"pos":""}];</script>
-<script id="d-positions">var SAVED_POSITIONS={"Ada":{"zone":"veld","sx":306.603,"sy":99.46975},"Vivièn":{"zone":"veld","sx":19.787405000000003,"sy":217.30351},"Isabel":{"zone":"wissel"},"Doutzen":{"zone":"veld","sx":380.8046,"sy":216.01136},"Faye":{"zone":"veld","sx":308.22880000000004,"sy":333.33943999999997},"Noralie":{"zone":"veld","sx":156.18734999999998,"sy":99.91953000000001},"Renske":{"zone":"veld","sx":155.80125,"sy":324.46123},"Rosie":{"zone":"veld","sx":236.39934999999997,"sy":217.60408000000004},"Nina":{"zone":"veld","sx":123.80279999999999,"sy":216.01136},"Mathilde":{"zone":"wissel"}};</script>
+<script id="d-positions">var SAVED_POSITIONS={"Ada":{"zone":"veld","sx":340.87,"sy":105.68},"Vivièn":{"zone":"veld","sx":25.94,"sy":215},"Isabel":{"zone":"wissel"},"Doutzen":{"zone":"veld","sx":373.8,"sy":215},"Faye":{"zone":"veld","sx":340.87,"sy":324.32},"Noralie":{"zone":"veld","sx":143.27,"sy":105.68},"Renske":{"zone":"veld","sx":176.2,"sy":324.32},"Rosie":{"zone":"veld","sx":242.07,"sy":215},"Nina":{"zone":"veld","sx":110.33,"sy":215},"Mathilde":{"zone":"wissel"}};</script>
 </head>
 <body><div class="tabs">
   <button class="tab active" onclick="window.showTab('overview',this)">📋 Overzicht</button>
@@ -332,9 +365,9 @@ body{font-family:Arial,sans-serif;background:var(--gray-bg);color:var(--black);p
     </div>
     <div class="op-main">
       <div class="dugout" id="dugout">
-        <div class="dugout-section"><div class="dugout-label">Wissel</div><div class="dugout-slots" id="slots-wissel"><div class="dugout-speler wissel lijn-midden" id="speler-Isabel" data-name="Isabel"><div class="speler-avatar"><div class="speler-circle">Is</div><div class="pos-badge pb-midden">M/V</div></div><div class="speler-name">Isabel</div></div><div class="dugout-speler wissel lijn-midden" id="speler-Mathilde" data-name="Mathilde"><div class="speler-avatar"><div class="speler-circle">Ma</div><div class="pos-badge pb-midden">M</div></div><div class="speler-name">Mathilde</div></div></div></div>
-        <div class="dugout-section"><div class="dugout-label">Coach</div><div class="dugout-slots" id="slots-coach"><div class="dugout-speler coach" id="speler-Romy" data-name="Romy"><div class="speler-avatar"><div class="speler-circle">Ro</div></div><div class="speler-name">Romy</div></div><div class="dugout-speler coach" id="speler-Luuk" data-name="Luuk"><div class="speler-avatar"><div class="speler-circle">Lu</div></div><div class="speler-name">Luuk</div></div></div></div>
-        <div class="dugout-section"><div class="dugout-label">Afgemeld</div><div class="dugout-slots" id="slots-afgemeld"></div></div>
+        <div class="dugout-section sectie-wissel"><div class="dugout-label">Wissel</div><div class="dugout-slots" id="slots-wissel"><div class="dugout-speler wissel lijn-midden" id="speler-Isabel" data-name="Isabel"><div class="speler-avatar"><div class="speler-circle">Is</div><div class="pos-badge pb-midden">M/V</div></div><div class="speler-name">Isabel</div></div><div class="dugout-speler wissel lijn-midden" id="speler-Mathilde" data-name="Mathilde"><div class="speler-avatar"><div class="speler-circle">Ma</div><div class="pos-badge pb-midden">M</div></div><div class="speler-name">Mathilde</div></div></div></div>
+        <div class="dugout-section sectie-coach"><div class="dugout-label">Coach</div><div class="dugout-slots" id="slots-coach"><div class="dugout-speler coach" id="speler-Romy" data-name="Romy"><div class="speler-avatar"><div class="speler-circle">Ro</div></div><div class="speler-name">Romy</div></div><div class="dugout-speler coach" id="speler-Luuk" data-name="Luuk"><div class="speler-avatar"><div class="speler-circle">Lu</div></div><div class="speler-name">Luuk</div></div></div></div>
+        <div class="dugout-section sectie-afgemeld"><div class="dugout-label">Afgemeld</div><div class="dugout-slots" id="slots-afgemeld"></div></div>
       </div>
       <div class="veld-stage" id="veld-stage">
       <div class="veld-wrap" id="veld-wrap">
@@ -354,7 +387,7 @@ body{font-family:Arial,sans-serif;background:var(--gray-bg);color:var(--black);p
           <circle cx="870" cy="295" r="3" fill="white" opacity="0.6"></circle>
           <circle cx="477" cy="295" r="3" fill="white" opacity="0.45"></circle>
         </g></svg>
-      <div class="speler lijn-achter" id="speler-Ada" data-name="Ada" style="left: 55.746%; top: 23.1325%;"><div class="speler-avatar"><div class="speler-circle">Ad</div><div class="pos-badge pb-achter">A/M/V</div></div><div class="speler-name">Ada</div></div><div class="speler lijn-voor" id="speler-Doutzen" data-name="Doutzen" style="left: 69.2372%; top: 50.2352%;"><div class="speler-avatar"><div class="speler-circle">Do</div><div class="pos-badge pb-voor">V</div></div><div class="speler-name">Doutzen</div></div><div class="speler lijn-midden" id="speler-Faye" data-name="Faye" style="left: 56.0416%; top: 77.5208%;"><div class="speler-avatar"><div class="speler-circle">Fa</div><div class="pos-badge pb-midden">M/V</div></div><div class="speler-name">Faye</div></div><div class="speler lijn-achter" id="speler-Nina" data-name="Nina" style="left: 22.5096%; top: 50.2352%;"><div class="speler-avatar"><div class="speler-circle">Ni</div><div class="pos-badge pb-achter">A</div></div><div class="speler-name">Nina</div></div><div class="speler lijn-midden" id="speler-Noralie" data-name="Noralie" style="left: 28.3977%; top: 23.2371%;"><div class="speler-avatar"><div class="speler-circle">No</div><div class="pos-badge pb-midden">M</div></div><div class="speler-name">Noralie</div></div><div class="speler lijn-achter" id="speler-Renske" data-name="Renske" style="left: 28.3275%; top: 75.4561%;"><div class="speler-avatar"><div class="speler-circle">Re</div><div class="pos-badge pb-achter">A</div></div><div class="speler-name">Renske</div></div><div class="speler lijn-achter" id="speler-Rosie" data-name="Rosie" style="left: 42.9817%; top: 50.6056%;"><div class="speler-avatar"><div class="speler-circle">Ro</div><div class="pos-badge pb-achter">A/M</div></div><div class="speler-name">Rosie</div></div><div class="speler lijn-achter" id="speler-Vivièn" data-name="Vivièn" style="left: 3.59771%; top: 50.5357%;"><div class="speler-avatar"><div class="speler-circle">Vi</div><div class="pos-badge pb-achter">A</div></div><div class="speler-name">Vivièn</div></div></div>
+      <div id="plek-hulp" class="plek-hulp" aria-hidden="true"><div class="plek-lijn plek-lijn-h" style="top: 50%;"></div><div class="plek-lijn plek-lijn-v" style="left: 20.06%;"></div><div class="plek-doel" style="left: 20.06%; top: 50%;"></div></div><div class="speler lijn-achter" id="speler-Ada" data-name="Ada" style="left: 55.9891%; top: 24.5767%;"><div class="speler-avatar"><div class="speler-circle">Ad</div><div class="pos-badge pb-achter">A/M/V</div></div><div class="speler-name">Ada</div></div><div class="speler lijn-voor" id="speler-Doutzen" data-name="Doutzen" style="left: 67.9636%; top: 50%;"><div class="speler-avatar"><div class="speler-circle">Do</div><div class="pos-badge pb-voor">V</div></div><div class="speler-name">Doutzen</div></div><div class="speler lijn-midden" id="speler-Faye" data-name="Faye" style="left: 55.9891%; top: 75.4233%;"><div class="speler-avatar"><div class="speler-circle">Fa</div><div class="pos-badge pb-midden">M/V</div></div><div class="speler-name">Faye</div></div><div class="speler lijn-achter" id="speler-Nina" data-name="Nina" style="left: 20.06%; top: 50%;"><div class="speler-avatar"><div class="speler-circle">Ni</div><div class="pos-badge pb-achter">A</div></div><div class="speler-name">Nina</div></div><div class="speler lijn-midden" id="speler-Noralie" data-name="Noralie" style="left: 32.0364%; top: 24.5767%;"><div class="speler-avatar"><div class="speler-circle">No</div><div class="pos-badge pb-midden">M</div></div><div class="speler-name">Noralie</div></div><div class="speler lijn-achter" id="speler-Renske" data-name="Renske" style="left: 32.0364%; top: 75.4233%;"><div class="speler-avatar"><div class="speler-circle">Re</div><div class="pos-badge pb-achter">A</div></div><div class="speler-name">Renske</div></div><div class="speler lijn-achter" id="speler-Rosie" data-name="Rosie" style="left: 44.0127%; top: 50%;"><div class="speler-avatar"><div class="speler-circle">Ro</div><div class="pos-badge pb-achter">A/M</div></div><div class="speler-name">Rosie</div></div><div class="speler lijn-achter" id="speler-Vivièn" data-name="Vivièn" style="left: 4.71636%; top: 50%;"><div class="speler-avatar"><div class="speler-circle">Vi</div><div class="pos-badge pb-achter">A</div></div><div class="speler-name">Vivièn</div></div></div>
       </div>
     </div>
     <div class="op-hint">
@@ -438,7 +471,7 @@ body{font-family:Arial,sans-serif;background:var(--gray-bg);color:var(--black);p
         <div class="format-row" style="margin-top:.35rem">Meerdere voorkeuren? Scheid ze met een <b>/</b>, bijvoorbeeld <b>Midden / Voor</b>. Geen voorkeur? Vul <b>Geen</b> in.</div>
       </div>
     </div>
-    <div class="app-version">Versie 1 · 2 september 2026</div>
+    <div class="app-version">Versie 1.3 · 26 oktober 2026</div>
     <div class="roster-card">
       <h3>Team &amp; voorkeurspositie</h3>
       <div class="roster-sub">Uit kolom A t/m C van het tabblad Team details</div>
@@ -828,6 +861,172 @@ function percentToSvg(px,py){
   if(isPortrait())return{sx:(1-py)*SVG_W,sy:px*SVG_H};
   return{sx:px*SVG_W,sy:py*SVG_H};
 }
+// ---- VASTE PLEKKEN OP HET VELD ----
+// Na het slepen springt een speelster naar de dichtstbijzijnde vaste plek,
+// zodat lijnen altijd recht en symmetrisch staan. Gerekend in meters op het
+// echte veld (91,4 x 55 m), dus de plekken zijn gelijk in beide schermstanden.
+// - Banen in de breedte: het midden (lijn door het hart van beide doelen) en
+//   7,5 / 15 / 22,5 m daarnaast. Boven en onder staan dus altijd even ver van
+//   de zijlijn.
+// - Kolommen in de lengte: om de 5,7 m (1/16 van het veld), zodat de
+//   23-meterlijnen en de middenlijn precies op een kolom vallen.
+// - De keeperplek ligt 2,5 m voor de doellijn, aan beide kanten.
+// - Speelsters boven of onder staan daarnaast precies in het midden tussen de
+//   middenspeelsters links en rechts van hen (zie berekenWeergave).
+var VELD_LENGTE=91.4;
+var PLEK_BANEN=[-22.5,-15,-7.5,0,7.5,15,22.5];
+var PLEK_KOLOMMEN=(function(){
+  var stap=VELD_LENGTE/16,k=[2.5];
+  for(var i=1;i<16;i++)k.push(Math.round(i*stap*1000)/1000);
+  k.push(VELD_LENGTE-2.5);
+  return k;
+})();
+// Opslagruimte (sx 0-550, sy 0-430) <-> meters. De veldtekening is 954 x 590
+// eenheden met 2 m marge rondom (10 eenheden = 1 meter); my=0 is het midden.
+function svgNaarMeter(sx,sy){return{mx:(sx/SVG_W*954-20)/10,my:(sy/SVG_H*590-295)/10};}
+function meterNaarSvg(mx,my){
+  return{sx:Math.round((20+mx*10)/954*SVG_W*100)/100,sy:Math.round((295+my*10)/590*SVG_H*100)/100};
+}
+function dichtstbij(lijst,v){var b=lijst[0];lijst.forEach(function(x){if(Math.abs(x-v)<Math.abs(b-v))b=x;});return b;}
+function plekSleutel(p){return p.mx+"|"+p.my;}
+// Dichtstbijzijnde vaste plek bij (sx,sy). Met 'bezet' wordt de dichtstbijzijnde
+// vrije plek gekozen, zodat twee speelsters nooit precies op elkaar staan.
+function zoekPlek(sx,sy,bezet){
+  var m=svgNaarMeter(sx,sy);
+  var p={mx:dichtstbij(PLEK_KOLOMMEN,m.mx),my:dichtstbij(PLEK_BANEN,m.my)};
+  if(bezet&&bezet[plekSleutel(p)]){
+    var best=null,bd=Infinity;
+    PLEK_KOLOMMEN.forEach(function(x){PLEK_BANEN.forEach(function(y){
+      var q={mx:x,my:y};if(bezet[plekSleutel(q)])return;
+      var d=Math.pow(x-m.mx,2)+Math.pow(y-m.my,2);if(d<bd){bd=d;best=q;}
+    });});
+    if(best)p=best;
+  }
+  return p;
+}
+// Houdt cirkel, letterbadge en naam binnen het veldvak, ook op een klein
+// scherm. Werkt aan beide kanten even ver, zodat links/rechts en boven/onder
+// gelijk blijven.
+var veldRand={x:0,y:0};
+function meetVeldRand(){
+  var w=document.getElementById("veld-wrap"),el=w&&w.querySelector(".speler");
+  if(!w||!el){veldRand={x:0,y:0};return;}
+  var W=w.clientWidth,H=w.clientHeight,r=el.offsetWidth/2,naam=el.querySelector(".speler-name");
+  var nh=naam?naam.offsetHeight+3:0;
+  veldRand={x:W?(r+10)/W:0,y:H?(r+nh)/H:0};
+}
+function binnenVeld(pct){
+  var x=pct.x,y=pct.y;
+  if(veldRand.x<0.5)x=Math.min(1-veldRand.x,Math.max(veldRand.x,x));
+  if(veldRand.y<0.5)y=Math.min(1-veldRand.y,Math.max(veldRand.y,y));
+  return{x:x,y:y};
+}
+function plekNaarPercent(p){var s=meterNaarSvg(p.mx,p.my);return binnenVeld(svgToPercent(s.sx,s.sy));}
+// Wie staat nu waar. huidigePlek is de vaste rasterplek (die wordt opgeslagen),
+// weergavePlek is waar ze getekend wordt na de tussen-regel hieronder.
+var huidigePlek={},weergavePlek={};
+// Tussen-regel: een speelster boven of onder de middenlijn die tussen twee
+// speelsters op de middenlijn in staat, komt precies in het midden van die
+// twee. Staan er in dezelfde baan meer speelsters tussen hetzelfde paar, dan
+// worden ze gelijk verdeeld (bij twee: op een derde en twee derde).
+// Wie gelijk staat met een middenspeelster, of verder naar voren of achteren
+// dan de buitenste middenspeelster, blijft op haar rasterplek.
+function berekenWeergave(plekken){
+  var midden=[],uit={},groepen={};
+  Object.keys(plekken).forEach(function(n){if(plekken[n].my===0)midden.push(plekken[n].mx);});
+  midden.sort(function(a,b){return a-b;});
+  Object.keys(plekken).forEach(function(n){
+    var p=plekken[n];uit[n]={mx:p.mx,my:p.my};
+    if(p.my===0||midden.indexOf(p.mx)>=0)return;
+    var a=null,b=null;
+    midden.forEach(function(x){if(x<p.mx)a=x;else if(x>p.mx&&b===null)b=x;});
+    if(a===null||b===null)return;
+    var k=a+"|"+b+"|"+p.my;(groepen[k]=groepen[k]||{a:a,b:b,namen:[]}).namen.push(n);
+  });
+  Object.keys(groepen).forEach(function(k){
+    var g=groepen[k];
+    g.namen.sort(function(x,y){return(plekken[x].mx-plekken[y].mx)||(x<y?-1:1);});
+    g.namen.forEach(function(n,i){uit[n].mx=g.a+(g.b-g.a)*(i+1)/(g.namen.length+1);});
+  });
+  return uit;
+}
+// Wie staat (zoals getekend) onder het loslaatpunt? Met haar wordt geruild.
+function speelsterOpPunt(m,behalve){
+  var wie=null,bd=Infinity;
+  Object.keys(weergavePlek).forEach(function(n){
+    if(n===behalve)return;
+    var w=weergavePlek[n],dx=Math.abs(w.mx-m.mx),dy=Math.abs(w.my-m.my);
+    if(dx<2.8&&dy<3.7){var d=dx*dx+dy*dy;if(d<bd){bd=d;wie=n;}}
+  });
+  return wie;
+}
+function zetOpPlek(name,p){
+  var s=meterNaarSvg(p.mx,p.my);
+  spelerPositions[name]={zone:"veld",sx:s.sx,sy:s.sy};SAVED_POSITIONS[name]=spelerPositions[name];
+  huidigePlek[name]=p;
+}
+// Rekent uit wat er gebeurt als 'name' op (sx,sy) wordt losgelaten, zonder iets
+// op te slaan. Laat je los op een speelster, dan ruilen jullie: zij gaat naar
+// jouw oude plek, of naar de wissel als je van de bank kwam. Anders kies je de
+// dichtstbijzijnde vrije rasterplek.
+function proefPlaatsing(name,sx,sy){
+  var m=svgNaarMeter(sx,sy),oud=huidigePlek[name],wie=speelsterOpPunt(m,name),doel;
+  if(wie)doel=huidigePlek[wie];
+  else{
+    var bezet={};
+    Object.keys(huidigePlek).forEach(function(n){if(n!==name)bezet[plekSleutel(huidigePlek[n])]=1;});
+    doel=zoekPlek(sx,sy,bezet);
+  }
+  var plekken={};Object.keys(huidigePlek).forEach(function(n){plekken[n]=huidigePlek[n];});
+  plekken[name]=doel;
+  if(wie){if(oud)plekken[wie]=oud;else delete plekken[wie];}
+  return{doel:doel,wie:wie,oud:oud,plekken:plekken};
+}
+function plaatsOpPlek(name,sx,sy){
+  var r=proefPlaatsing(name,sx,sy);
+  zetOpPlek(name,r.doel);
+  if(r.wie){
+    if(r.oud)zetOpPlek(r.wie,r.oud);
+    else{spelerPositions[r.wie]={zone:"wissel"};SAVED_POSITIONS[r.wie]=spelerPositions[r.wie];delete huidigePlek[r.wie];}
+  }
+  weergavePlek=berekenWeergave(huidigePlek);
+  return{doel:r.doel,geruild:r.wie,naarBank:!!(r.wie&&!r.oud)};
+}
+// Laat een veldspeelster kort naar haar plek glijden
+function schuifNaar(el,p){
+  if(!el||!p)return;
+  var pct=plekNaarPercent(p);
+  el.classList.add("snap");
+  el.style.left=(pct.x*100)+"%";el.style.top=(pct.y*100)+"%";
+  clearTimeout(el._snapT);el._snapT=setTimeout(function(){el.classList.remove("snap");},240);
+}
+// Doelring en hulplijnen tijdens het slepen
+function plekHulp(){
+  var h=document.getElementById("plek-hulp");
+  if(!h){
+    var w=document.getElementById("veld-wrap");if(!w)return null;
+    h=document.createElement("div");h.id="plek-hulp";h.className="plek-hulp";h.setAttribute("aria-hidden","true");
+    h.innerHTML='<div class="plek-lijn plek-lijn-h"></div><div class="plek-lijn plek-lijn-v"></div><div class="plek-doel"></div>';
+    w.appendChild(h);
+  }
+  return h;
+}
+function toonDoel(px,py,name){
+  var h=plekHulp();if(!h)return;
+  var svg=percentToSvg(px,py),r=proefPlaatsing(name,svg.sx,svg.sy);
+  var pct=plekNaarPercent(berekenWeergave(r.plekken)[name]);
+  h.querySelector(".plek-lijn-h").style.top=(pct.y*100)+"%";
+  h.querySelector(".plek-lijn-v").style.left=(pct.x*100)+"%";
+  var ring=h.querySelector(".plek-doel");ring.style.left=(pct.x*100)+"%";ring.style.top=(pct.y*100)+"%";
+  h.classList.add("aan");
+  var wie=r.wie;
+  document.querySelectorAll("#veld-wrap .speler.ruil-doel").forEach(function(e){if(e.dataset.name!==wie)e.classList.remove("ruil-doel");});
+  if(wie){var we=document.getElementById("speler-"+wie);if(we)we.classList.add("ruil-doel");}
+}
+function verbergDoel(){
+  var h=document.getElementById("plek-hulp");if(h)h.classList.remove("aan");
+  document.querySelectorAll("#veld-wrap .speler.ruil-doel").forEach(function(e){e.classList.remove("ruil-doel");});
+}
 function circleInner(sp){var p=spelerPhotos[sp.name];return p?'<img src="'+p+'" alt="'+sp.name+'">':sp.initials;}
 function createSpelerEl(sp,pos){var el=document.createElement("div");var lj=posLijn(sp.pos);el.className="speler"+(lj?" lijn-"+lj:"");el.id="speler-"+sp.name;el.dataset.name=sp.name;el.style.left=(pos.x*100)+"%";el.style.top=(pos.y*100)+"%";el.innerHTML='<div class="speler-avatar"><div class="speler-circle">'+circleInner(sp)+'</div>'+posBadge(sp.pos)+'</div><div class="speler-name">'+sp.name+'</div>';el.querySelector(".speler-circle").addEventListener("click",function(){if(el._wasDragged){el._wasDragged=false;return;}triggerPhotoUpload(sp.name);});return el;}
 function createDugoutEl(sp,zone){var el=document.createElement("div");var lj=zone==="coach"?"":posLijn(sp.pos);el.className="dugout-speler "+zone+(lj?" lijn-"+lj:"");el.id="speler-"+sp.name;el.dataset.name=sp.name;el.innerHTML='<div class="speler-avatar"><div class="speler-circle">'+circleInner(sp)+'</div>'+(zone==="coach"?"":posBadge(sp.pos))+'</div><div class="speler-name">'+sp.name+'</div>';el.querySelector(".speler-circle").addEventListener("click",function(){if(el._wasDragged){el._wasDragged=false;return;}triggerPhotoUpload(sp.name);});return el;}
@@ -846,46 +1045,89 @@ function renderOpstelling(){
   var veld=document.getElementById("veld-wrap"),slotW=document.getElementById("slots-wissel"),slotC=document.getElementById("slots-coach");
   if(!veld||!slotW||!slotC)return;
   veld.querySelectorAll(".speler").forEach(function(e){e.remove();});slotW.innerHTML="";slotC.innerHTML="";var slotAf=document.getElementById("slots-afgemeld");if(slotAf)slotAf.innerHTML="";
+  huidigePlek={};weergavePlek={};var bezet={};
   SPELERS_DEFAULT.forEach(function(sp){
     var zone=getZone(sp.name),saved=spelerPositions[sp.name]||{};
-    if(zone==="veld"){var pct=saved.sx!==undefined?svgToPercent(saved.sx,saved.sy):svgToPercent(sp.sx,sp.sy);var el=createSpelerEl(sp,pct);veld.appendChild(el);makeVeldDraggable(el,sp.name);}
+    if(zone==="veld"){
+      // Ook oude, vrij geplaatste posities komen zo netjes op een vaste plek
+      var heeftEigen=saved.sx!==undefined,bron=heeftEigen?saved:sp;
+      var p=zoekPlek(bron.sx,bron.sy,bezet);bezet[plekSleutel(p)]=sp.name;
+      if(heeftEigen)zetOpPlek(sp.name,p);else huidigePlek[sp.name]=p;
+      var el=createSpelerEl(sp,plekNaarPercent(p));veld.appendChild(el);makeVeldDraggable(el,sp.name);}
     else{var dEl=createDugoutEl(sp,zone);if(zone==="coach")slotC.appendChild(dEl);else if(zone==="afgemeld"){var slotA=document.getElementById("slots-afgemeld");if(slotA)slotA.appendChild(dEl);}else slotW.appendChild(dEl);makeDugoutDraggable(dEl,sp.name,zone);}
   });
-}
-function getDropZone(cx,cy){
-  // Find all dugout sections by their labels, use the full section container
-  var sections=document.querySelectorAll(".dugout-section");
-  var bestZone="wissel",bestDist=Infinity;
-  sections.forEach(function(sec){
-    var label=sec.querySelector(".dugout-label");
-    if(!label)return;
-    var txt=label.textContent.toLowerCase().trim();
-    if(txt==="coach")return; // skip coach
-    var r=sec.getBoundingClientRect();
-    // Use center of section for proximity
-    var centerY=(r.top+r.bottom)/2;
-    var dist=Math.abs(cy-centerY);
-    if(dist<bestDist){bestDist=dist;bestZone=txt==="afgemeld"?"afgemeld":"wissel";}
+  // Nu de cirkels er staan kunnen we hun maat meten en de randen bewaken
+  meetVeldRand();
+  weergavePlek=berekenWeergave(huidigePlek);
+  veld.querySelectorAll(".speler").forEach(function(e){
+    var p=weergavePlek[e.dataset.name];if(!p)return;
+    var c=plekNaarPercent(p);e.style.left=(c.x*100)+"%";e.style.top=(c.y*100)+"%";
   });
-  return bestZone;
+}
+// Afgemeld alleen als je echt op het vak Afgemeld (onderaan de bank) loslaat.
+// De rest van de bank, ook de lege ruimte en het coachvak, telt als Wissel.
+function getDropZone(cx,cy){
+  var af=document.querySelector(".dugout-section.sectie-afgemeld");
+  if(af){var r=af.getBoundingClientRect();if(r.height&&cy>=r.top-4)return "afgemeld";}
+  return "wissel";
+}
+// Licht tijdens het slepen het bankvak op waar de speelster terechtkomt
+function toonBankDoel(cx,cy){
+  var dug=document.getElementById("dugout");if(!dug)return false;
+  var boven=isOverDugout(cx,cy),z=boven?getDropZone(cx,cy):"";
+  dug.classList.toggle("dugout-hover",boven);
+  dug.querySelectorAll(".dugout-section").forEach(function(sec){sec.classList.toggle("drop-doel",!!z&&sec.classList.contains("sectie-"+z));});
+  return boven;
+}
+function verbergBankDoel(){
+  var dug=document.getElementById("dugout");if(!dug)return;
+  dug.classList.remove("dugout-hover");
+  dug.querySelectorAll(".drop-doel").forEach(function(sec){sec.classList.remove("drop-doel");});
 }
 function isOverDugout(cx,cy){var d=document.getElementById("dugout");if(!d)return false;var r=d.getBoundingClientRect();return cx>=r.left&&cx<=r.right&&cy>=r.top&&cy<=r.bottom;}
 function makeVeldDraggable(el,name){
-  var wrap=document.getElementById("veld-wrap"),startX,startY,startLeft,startTop,isDragging=false,curCX=0,curCY=0;
-  function onStart(cx,cy){isDragging=true;el.classList.add("dragging");startX=cx;startY=cy;curCX=cx;curCY=cy;startLeft=parseFloat(el.style.left)/100;startTop=parseFloat(el.style.top)/100;}
-  function onMove(cx,cy){if(!isDragging)return;curCX=cx;curCY=cy;var r=wrap.getBoundingClientRect();var nx=Math.min(0.99,Math.max(0.01,startLeft+(cx-startX)/r.width));var ny=Math.min(0.99,Math.max(0.01,startTop+(cy-startY)/r.height));el.style.left=(nx*100)+"%";el.style.top=(ny*100)+"%";var dug=document.getElementById("dugout");if(dug)dug.classList.toggle("dugout-hover",isOverDugout(cx,cy));}
-  function onEnd(){if(!isDragging)return;isDragging=false;el.classList.remove("dragging");el._wasDragged=true;var dug=document.getElementById("dugout");if(dug)dug.classList.remove("dugout-hover");var sp=SPELERS_DEFAULT.find(function(s){return s.name===name;});var origZone=sp?sp.zone:"wissel";if(isOverDugout(curCX,curCY)&&origZone!=="coach"){var targetZone=getDropZone(curCX,curCY);spelerPositions[name]={zone:targetZone};SAVED_POSITIONS[name]=spelerPositions[name];renderOpstelling();}else{var pct={x:parseFloat(el.style.left)/100,y:parseFloat(el.style.top)/100};var svg=percentToSvg(pct.x,pct.y);spelerPositions[name]={zone:"veld",sx:svg.sx,sy:svg.sy};SAVED_POSITIONS[name]=spelerPositions[name];}}
+  var wrap=document.getElementById("veld-wrap"),startX,startY,startLeft,startTop,actief=false,bewogen=false,curCX=0,curCY=0;
+  function onStart(cx,cy){actief=true;bewogen=false;startX=cx;startY=cy;curCX=cx;curCY=cy;el.classList.remove("snap");startLeft=parseFloat(el.style.left)/100;startTop=parseFloat(el.style.top)/100;}
+  function onMove(cx,cy){
+    if(!actief)return;curCX=cx;curCY=cy;
+    // Pas slepen vanaf een paar pixels, zodat een tik op de cirkel een foto kiest
+    if(!bewogen){if(Math.abs(cx-startX)+Math.abs(cy-startY)<6)return;bewogen=true;el.classList.add("dragging");}
+    var r=wrap.getBoundingClientRect();
+    var nx=Math.min(0.99,Math.max(0.01,startLeft+(cx-startX)/r.width));
+    var ny=Math.min(0.99,Math.max(0.01,startTop+(cy-startY)/r.height));
+    el.style.left=(nx*100)+"%";el.style.top=(ny*100)+"%";
+    var boven=toonBankDoel(cx,cy);
+    if(boven)verbergDoel();else toonDoel(nx,ny,name);
+  }
+  function onEnd(){
+    if(!actief)return;actief=false;
+    if(!bewogen)return;
+    el.classList.remove("dragging");el._wasDragged=true;verbergDoel();
+    verbergBankDoel();
+    var sp=SPELERS_DEFAULT.find(function(s){return s.name===name;});var origZone=sp?sp.zone:"wissel";
+    if(isOverDugout(curCX,curCY)&&origZone!=="coach"){
+      var targetZone=getDropZone(curCX,curCY);spelerPositions[name]={zone:targetZone};SAVED_POSITIONS[name]=spelerPositions[name];renderOpstelling();return;
+    }
+    var svg=percentToSvg(parseFloat(el.style.left)/100,parseFloat(el.style.top)/100);
+    plaatsOpPlek(name,svg.sx,svg.sy);
+    // Iedereen naar de nieuwe plek: de sleper, een eventuele ruilpartner en de
+    // speelsters boven/onder die opnieuw in het midden worden gezet
+    Object.keys(weergavePlek).forEach(function(n){schuifNaar(document.getElementById("speler-"+n),weergavePlek[n]);});
+  }
   el.addEventListener("mousedown",function(e){e.preventDefault();onStart(e.clientX,e.clientY);function mm(e){onMove(e.clientX,e.clientY);}function mu(){onEnd();window.removeEventListener("mousemove",mm);window.removeEventListener("mouseup",mu);}window.addEventListener("mousemove",mm);window.addEventListener("mouseup",mu);});
   el.addEventListener("touchstart",function(e){var t=e.touches[0];onStart(t.clientX,t.clientY);},{passive:true});
   el.addEventListener("touchmove",function(e){e.preventDefault();var t=e.touches[0];onMove(t.clientX,t.clientY);},{passive:false});
   el.addEventListener("touchend",function(){onEnd();});
+  el.addEventListener("touchcancel",function(){onEnd();});
 }
 function makeDugoutDraggable(el,name,zone){
   if(zone==="coach")return;
   var startX,startY,isDragging=false,curCX=0,curCY=0,ghost=null;
   function onStart(cx,cy){isDragging=false;startX=cx;startY=cy;curCX=cx;curCY=cy;}
-  function onMove(cx,cy){curCX=cx;curCY=cy;var dist=Math.sqrt(Math.pow(cx-startX,2)+Math.pow(cy-startY,2));if(!isDragging&&dist>8){isDragging=true;el._wasDragged=true;ghost=document.createElement("div");ghost.style.cssText="position:fixed;z-index:9999;pointer-events:none;display:flex;flex-direction:column;align-items:center;transform:translate(-50%,-50%);";ghost.innerHTML=el.innerHTML;document.body.appendChild(ghost);}if(ghost){ghost.style.left=cx+"px";ghost.style.top=cy+"px";}var dug=document.getElementById("dugout");if(dug)dug.classList.toggle("dugout-hover",isOverDugout(cx,cy));}
-  function onEnd(){if(ghost){ghost.remove();ghost=null;}var dug=document.getElementById("dugout");if(dug)dug.classList.remove("dugout-hover");if(!isDragging)return;isDragging=false;var veld=document.getElementById("veld-wrap");if(veld){var r=veld.getBoundingClientRect();if(curCX>=r.left&&curCX<=r.right&&curCY>=r.top&&curCY<=r.bottom){var px=(curCX-r.left)/r.width,py=(curCY-r.top)/r.height;var svg=percentToSvg(Math.min(0.99,Math.max(0.01,px)),Math.min(0.99,Math.max(0.01,py)));spelerPositions[name]={zone:"veld",sx:svg.sx,sy:svg.sy};SAVED_POSITIONS[name]=spelerPositions[name];renderOpstelling();return;}}}
+  function onMove(cx,cy){curCX=cx;curCY=cy;var dist=Math.sqrt(Math.pow(cx-startX,2)+Math.pow(cy-startY,2));if(!isDragging&&dist>8){isDragging=true;el._wasDragged=true;ghost=document.createElement("div");ghost.style.cssText="position:fixed;z-index:9999;pointer-events:none;display:flex;flex-direction:column;align-items:center;transform:translate(-50%,-50%);";ghost.innerHTML=el.innerHTML;document.body.appendChild(ghost);}if(ghost){ghost.style.left=cx+"px";ghost.style.top=cy+"px";}if(isDragging){toonBankDoel(cx,cy);var vr=document.getElementById("veld-wrap").getBoundingClientRect();if(cx>=vr.left&&cx<=vr.right&&cy>=vr.top&&cy<=vr.bottom)toonDoel(Math.min(0.99,Math.max(0.01,(cx-vr.left)/vr.width)),Math.min(0.99,Math.max(0.01,(cy-vr.top)/vr.height)),name);else verbergDoel();}}
+  function onEnd(){if(ghost){ghost.remove();ghost=null;}verbergDoel();verbergBankDoel();if(!isDragging)return;isDragging=false;var veld=document.getElementById("veld-wrap");if(veld){var r=veld.getBoundingClientRect();if(curCX>=r.left&&curCX<=r.right&&curCY>=r.top&&curCY<=r.bottom){var px=(curCX-r.left)/r.width,py=(curCY-r.top)/r.height;var svg=percentToSvg(Math.min(0.99,Math.max(0.01,px)),Math.min(0.99,Math.max(0.01,py)));plaatsOpPlek(name,svg.sx,svg.sy);renderOpstelling();return;}}
+    // Binnen de bank verschuiven: van Wissel naar Afgemeld of terug
+    if(isOverDugout(curCX,curCY)){var nz=getDropZone(curCX,curCY);if(nz!==zone){spelerPositions[name]={zone:nz};SAVED_POSITIONS[name]=spelerPositions[name];renderOpstelling();}}}
   el.addEventListener("mousedown",function(e){e.preventDefault();onStart(e.clientX,e.clientY);function mm(e){onMove(e.clientX,e.clientY);}function mu(){onEnd();window.removeEventListener("mousemove",mm);window.removeEventListener("mouseup",mu);}window.addEventListener("mousemove",mm);window.addEventListener("mouseup",mu);});
   el.addEventListener("touchstart",function(e){var t=e.touches[0];onStart(t.clientX,t.clientY);},{passive:true});
   el.addEventListener("touchmove",function(e){e.preventDefault();var t=e.touches[0];onMove(t.clientX,t.clientY);},{passive:false});
@@ -1736,4 +1978,4 @@ if ('serviceWorker' in navigator) {
 </script>
 
 
-</body></html>
+<object id="__symantecPKIClientMessenger" data-supports-flavor-configuration="true" data-extension-version="0.5.0.109" style="display: none;"></object><span id="__symantecPKIClientDetector" style="display: none;">__PRESENT</span></body></html>
