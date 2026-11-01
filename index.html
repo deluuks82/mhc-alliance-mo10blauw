@@ -91,6 +91,21 @@ body.match .match-hint{display:block}
 .dugout::-webkit-scrollbar{display:none}
 .dug-sec{display:flex;flex-direction:column;align-items:center;gap:.3rem;border-radius:8px;padding:2px 0 6px}
 .dug-sec.wissel{flex:1 0 auto}
+body.match .dug-sec.wissel{flex:0 0 auto}
+body.match .dugout{width:74px}
+.dug-sec.volgorde{display:none}
+body.match .dug-sec.volgorde{display:flex;flex:1 1 0;min-height:0;overflow:hidden}
+.order-list{flex:1;min-height:0;width:100%;display:flex;flex-direction:column;gap:3px;overflow-y:auto;overflow-x:hidden;padding:0 3px 2px;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;touch-action:pan-y;scrollbar-width:none}
+.order-list::-webkit-scrollbar{display:none}
+.order-list>.order-item:first-child{margin-top:auto}
+.order-fade{position:relative}
+.order-more{display:none;flex-shrink:0;text-align:center;font-size:9px;font-weight:900;color:#FDE047;line-height:1;padding-top:2px}
+.order-more.on{display:block}
+.order-item{display:flex;align-items:center;gap:3px;background:rgba(255,255,255,.07);border-radius:6px;padding:3px 4px;font-size:9px;font-weight:800;color:#fff;line-height:1.1;flex-shrink:0}
+.order-item b{font-size:7.5px;color:rgba(255,255,255,.45);min-width:10px}
+.order-item span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.order-item.start{background:rgba(146,64,14,.45)}
+.order-item.last{outline:1.5px solid #FDE047}
 .dug-sec+.dug-sec{border-top:1px solid rgba(255,255,255,.08);padding-top:.35rem}
 .dug-sec.drop{background:rgba(0,120,86,.35);box-shadow:inset 0 0 0 1.5px var(--green)}
 .dug-sec.afgemeld.drop{background:rgba(185,28,28,.32);box-shadow:inset 0 0 0 1.5px #F87171}
@@ -254,11 +269,12 @@ td:first-child{font-weight:800;white-space:nowrap}
       <button type="button" id="btn-so-done">Genomen</button>
     </div>
   </div>
-  <div class="bench-legend">Bank (doel 11 min): <span><i style="background:rgba(255,255,255,.3)"></i>0</span><span><i style="background:#16A34A"></i>&lt;9</span><span><i style="background:#FACC15"></i>9-13</span><span><i style="background:#DC2626"></i>&gt;13</span></div>
+  <div class="bench-legend">Bank (doel 10 min): <span><i style="background:rgba(255,255,255,.3)"></i>0</span><span><i style="background:#16A34A"></i>&lt;8</span><span><i style="background:#FACC15"></i>8-12</span><span><i style="background:#DC2626"></i>&gt;12</span></div>
   <div class="match-hint" id="match-hint"></div>
   <div class="op-main">
     <div class="dugout" id="dugout">
       <div class="dug-sec wissel" data-zone="wissel"><div class="dug-label">Wissel</div><div class="slots" id="slots-wissel"></div></div>
+      <div class="dug-sec volgorde"><div class="dug-label">Volgorde</div><div class="order-list" id="order-list"></div><div class="order-more" id="order-more">▼</div></div>
       <div class="dug-sec coach" data-zone="coach"><div class="dug-label">Coach</div><div class="slots" id="slots-coach"></div></div>
       <div class="dug-sec afgemeld" data-zone="afgemeld"><div class="dug-label">Afgemeld</div><div class="slots" id="slots-afgemeld"></div></div>
     </div>
@@ -343,7 +359,7 @@ td:first-child{font-weight:800;white-space:nowrap}
       <div class="fr"><code>A</code> Speelsters (vanaf rij 2) · <code>B</code> Positievoorkeur · <code>C</code> Coaches</div>
       <div class="fr">Meerdere voorkeuren scheiden met <b>/</b>, bijvoorbeeld <b>Midden / Voor</b>.</div>
     </div>
-    <div class="version">Versie 2.2 (v30) · 31 oktober 2026</div>
+    <div class="version">Versie 2.5 (v33) · 31 oktober 2026</div>
   </div>
 </section>
 
@@ -357,7 +373,7 @@ td:first-child{font-weight:800;white-space:nowrap}
 var D=window.APP_DATA||{};
 var MATCHES=D.matches||[], SPELERS=D.spelers||[], TEAM=D.teamNaam||"MO10";
 var K_POS="mhc-v28-positions", K_PHOTO="mhc-v28-photos", K_CLOCK="mhc-v28-clock", K_SHOOT="mhc-v28-shoot",
-    K_START="mhc-v28-startformatie", K_HIST="mhc-v28-history", K_PICK="mhc-v28-picker";
+    K_START="mhc-v28-startformatie", K_HIST="mhc-v28-history", K_PICK="mhc-v28-picker", K_ORDER="mhc-v32-wisselvolgorde";
 function load(k,def){try{var v=localStorage.getItem(k);return v?JSON.parse(v):def;}catch(e){return def;}}
 function save(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){toast("Opslaan lukt niet (geheugen vol?)");}}
 function clone(o){return JSON.parse(JSON.stringify(o));}
@@ -474,7 +490,7 @@ function spEl(s,cls){
 function render(){
   if(!$("page-veld").classList.contains("active"))return;
   sizeVeld();rebuildPlekken();
-  var v=$("veld");v.querySelectorAll(".sp").forEach(function(e){e.remove();});
+  var v=$("veld");v.querySelectorAll(".sp").forEach(function(e){e.remove();});orderSig="";
   ["wissel","coach","afgemeld"].forEach(function(z){$("slots-"+z).innerHTML="";});
   SPELERS.forEach(function(s){
     var z=zoneOf(s.name);
@@ -564,8 +580,8 @@ function splitNames(s){return String(s||"").split(/[,;&/]|\sen\s/).map(function(
 
 // ================== WEDSTRIJDMODUS: KLOK ==================
 var HALF_MS=30*60*1000;
-// Banktijd-kleuren: doel 11 min per speelster, marge -2/+2 min
-var BANK_DOEL=11,BANK_MIN=9,BANK_MAX=13;
+// Banktijd-kleuren: doel 10 min per speelster, marge -2/+2 min
+var BANK_DOEL=10,BANK_MIN=8,BANK_MAX=12;
 function bankKleur(ms){var m=ms/60000;if(ms<1000)return"nul";if(m<BANK_MIN)return"groen";if(m<=BANK_MAX)return"geel";return"rood";}
 function clockState(){var c=load(K_CLOCK,null);if(!c)c={half:1,elapsed:0,running:false,runAt:null,started:false,bench:{}};c.bench=c.bench||{};return c;}
 function elapsed(c){return Math.min(HALF_MS,c.elapsed+(c.running&&c.runAt?Date.now()-c.runAt:0));}
@@ -585,7 +601,7 @@ function toggleClock(){
   if(c.running){c.elapsed=elapsed(c);c.running=false;c.runAt=null;syncBench(c,now);save(K_CLOCK,c);toast("Gepauzeerd");}
   else{
     if(elapsed(c)>=HALF_MS){toast(c.half===1?"Helft voorbij · tik Rust":"Wedstrijd is afgelopen");return;}
-    if(!c.started){c.started=true;save(K_START,positions);save(K_SHOOT,null);}
+    if(!c.started){c.started=true;save(K_START,positions);save(K_SHOOT,null);save(K_ORDER,newOrder());}
     c.running=true;c.runAt=now;syncBench(c,now);save(K_CLOCK,c);toast(c.elapsed?"Hervat":"Wedstrijd gestart");
   }
   updateHud();
@@ -602,7 +618,7 @@ function nextHalf(){
 function resetMatch(){
   if(!confirm("Klok, wisseltijden en shoot-outs resetten en terug naar de beginopstelling?"))return;
   var start=load(K_START,null);if(start)positions=clone(start);
-  save(K_CLOCK,null);save(K_SHOOT,null);save(K_HIST,[]);localStorage.removeItem(K_START);selOut=null;
+  save(K_CLOCK,null);save(K_SHOOT,null);save(K_HIST,[]);save(K_ORDER,null);localStorage.removeItem(K_START);selOut=null;
   persistPositions();render();updateHud();toast("Gereset naar beginopstelling");
 }
 
@@ -639,16 +655,17 @@ function onMatchTap(e){
 function doSwap(out,inn){
   pushHist();
   var c=clockState(),now=Date.now(),p=plek[out];
+  var ord=load(K_ORDER,null)||newOrder();ord.list.push(out);save(K_ORDER,ord);
   positions[out]={zone:"wissel"};delete plek[out];setVeld(inn,p);
   syncBench(c,now);save(K_CLOCK,c);
   selOut=null;persistPositions();render();updateHud();toast(out+" eruit · "+inn+" erin");
 }
-function pushHist(){var h=load(K_HIST,[]);h.push({pos:clone(positions),clock:clockState().bench,shoot:shootState()});if(h.length>40)h.shift();save(K_HIST,h);}
+function pushHist(){var h=load(K_HIST,[]);h.push({pos:clone(positions),clock:clockState().bench,shoot:shootState(),order:load(K_ORDER,null)});if(h.length>40)h.shift();save(K_HIST,h);}
 function undo(){
   var h=load(K_HIST,[]),a=h.pop();if(!a){toast("Niets om terug te zetten");return;}
   save(K_HIST,h);positions=a.pos;var c=clockState(),now=Date.now();c.bench=a.clock;
   Object.keys(c.bench).forEach(function(n){if(c.bench[n].since!==null&&!c.running)c.bench[n].since=null;});syncBench(c,now);
-  save(K_CLOCK,c);save(K_SHOOT,a.shoot);selOut=null;persistPositions();render();updateHud();toast("Laatste actie teruggezet");
+  save(K_CLOCK,c);save(K_SHOOT,a.shoot);save(K_ORDER,a.order===undefined?null:a.order);selOut=null;persistPositions();render();updateHud();toast("Laatste actie teruggezet");
 }
 
 // ================== HUD BIJWERKEN ==================
@@ -663,6 +680,7 @@ function decorateMatch(){
     var sb=el.querySelector(".so-badge");if(sb)sb.textContent=st.count[n]||0;
     var bt=el.querySelector(".bt-badge");if(bt&&on){var ms=benchMs(c,n);bt.textContent="⏱"+fmt(ms);bt.className="bt-badge "+bankKleur(ms);}
   });
+  if(on)renderOrder();
   var h=$("match-hint");
   if(on)h.textContent=selOut?(selOut+" eruit · tik links wie erin gaat"):(c.running?"Tik een speelster op het veld om te wisselen":(c.started?"Klok staat stil":"Tik ▶ Start om de wedstrijd te beginnen"));
 }
@@ -680,6 +698,19 @@ function updateHud(){
   else $("so-meta").textContent="Geen veldspeelsters";
   decorateMatch();
 }
+// Wisselvolgorde: onderaan de startwissels, elke speelster die eruit gaat komt erbovenop
+function newOrder(){var w=players().filter(function(s){return zoneOf(s.name)==="wissel";}).map(function(s){return s.name;});return{start:w.length,list:w};}
+var orderSig="";
+function orderMore(){var l=$("order-list");$("order-more").classList.toggle("on",l.scrollHeight-l.clientHeight-l.scrollTop>2);}
+function renderOrder(){
+  var ord=load(K_ORDER,null)||newOrder(),sig=ord.start+"#"+ord.list.join("|"),l=$("order-list");
+  if(sig===orderSig&&l.childElementCount)return;orderSig=sig;l.innerHTML="";
+  for(var i=ord.list.length-1;i>=0;i--){var d=document.createElement("div");
+    d.className="order-item"+(i<ord.start?" start":"")+(i===ord.list.length-1&&i>=ord.start?" last":"");
+    d.innerHTML="<b>"+(i+1)+"</b><span>"+esc(ord.list[i])+"</span>";l.appendChild(d);}
+  // Nieuwste bovenaan in beeld; scroll naar beneden voor de eerdere wissels
+  l.scrollTop=0;orderMore();
+}
 var tick=null;
 function startTick(){clearInterval(tick);tick=setInterval(updateHud,500);}
 function stopTick(){clearInterval(tick);tick=null;}
@@ -689,7 +720,7 @@ var MON={Jan:0,Feb:1,Mrt:2,Apr:3,Mei:4,Jun:5,Jul:6,Aug:7,Sep:8,Okt:9,Nov:10,Dec:
 function matchDate(m){var t=new Date(),mo=MON[m.maand]||0,y=t.getFullYear();if(mo<7&&t.getMonth()>=7)y++;if(mo>=7&&t.getMonth()<7)y--;return new Date(y,mo,parseInt(m.dag,10)||1);}
 function sortedMatches(){return MATCHES.map(function(m,i){return{m:m,i:i};}).sort(function(a,b){return matchDate(a.m)-matchDate(b.m);});}
 function teamLabel(){return"MHC Alliance · "+TEAM.replace(/\s*-\s*/g,"-");}
-function title(m){var t=m.tegenstander||"";return m.type==="Thuis"?teamLabel()+" – "+t:t+" – "+teamLabel();}
+function title(m){return m.tegenstander||"";}
 function row(ic,l,v,cls){return'<div class="info-row'+(cls?" "+cls:"")+'"><div class="info-label"><span>'+ic+'</span>'+l+'</div><div class="info-value">'+esc(v)+'</div></div>';}
 function card(m,past){
   var th=m.type==="Thuis",r="";
@@ -848,6 +879,7 @@ function init(){
   $("photo-input").addEventListener("change",onPhoto);
   $("file-input").addEventListener("change",onExcel);
   $("picker").addEventListener("change",onPick);
+  $("order-list").addEventListener("scroll",orderMore,{passive:true});
   $("btn-share").addEventListener("click",shareLineup);
   $("btn-save-op").addEventListener("click",function(){persistPositions();toast("Opstelling opgeslagen");});
   $("btn-reset-op").addEventListener("click",function(){if(!confirm("Terug naar de standaardopstelling uit het bestand?"))return;positions=clone(D.positions||{});persistPositions();render();toast("Standaardopstelling teruggezet");});
@@ -857,7 +889,7 @@ function init(){
   $("btn-so-random").addEventListener("click",shootRandom);
   $("btn-download").addEventListener("click",downloadHTML);$("btn-poster").addEventListener("click",poster);
   $("btn-photos").addEventListener("click",function(){if(!confirm("Alle foto's wissen?"))return;photos={};save(K_PHOTO,photos);toast("Foto's gewist");});
-  var rt;function relayout(){clearTimeout(rt);rt=setTimeout(function(){setAppHeight();render();},120);}
+  var rt;function relayout(){clearTimeout(rt);rt=setTimeout(function(){setAppHeight();orderSig="";render();},120);}
   window.addEventListener("resize",relayout);window.addEventListener("orientationchange",relayout);if(window.visualViewport)window.visualViewport.addEventListener("resize",relayout);
   document.addEventListener("visibilitychange",function(){if(!document.hidden)updateHud();});
   setAppHeight();renderOverview();renderTeam();fillPicker();
