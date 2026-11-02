@@ -3,8 +3,8 @@
   "positions": {
     "Ada": {
       "zone": "veld",
-      "sx": 307.94,
-      "sy": 324.32
+      "sx": 25.94,
+      "sy": 215
     },
     "Vivièn": {
       "zone": "veld",
@@ -13,22 +13,20 @@
     },
     "Isabel": {
       "zone": "veld",
-      "sx": 340.87,
-      "sy": 105.68
+      "sx": 275,
+      "sy": 215
     },
     "Doutzen": {
-      "zone": "veld",
-      "sx": 373.8,
-      "sy": 215
+      "zone": "wissel"
     },
     "Faye": {
       "zone": "veld",
-      "sx": 110.33,
+      "sx": 439.67,
       "sy": 215
     },
     "Noralie": {
       "zone": "veld",
-      "sx": 25.94,
+      "sx": 143.27,
       "sy": 215
     },
     "Renske": {
@@ -36,17 +34,19 @@
     },
     "Rosie": {
       "zone": "veld",
-      "sx": 143.27,
+      "sx": 209.13,
       "sy": 324.32
     },
     "Nina": {
-      "zone": "wissel"
+      "zone": "veld",
+      "sx": 307.94,
+      "sy": 324.32
     },
     "Mathilde": {
       "zone": "veld",
-      "sx": 242.07,
-      "sy": 215
+      "sx": 340.87,
+      "sy": 105.68
     }
   },
-  "updatedAt": "2026-11-02T18:27:00.000Z"
+  "updatedAt": "2026-11-02T18:55:05.003Z"
 }
