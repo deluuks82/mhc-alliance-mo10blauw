@@ -1,0 +1,52 @@
+{
+  "teamNaam": "MO10 - Blauw",
+  "positions": {
+    "Ada": {
+      "zone": "veld",
+      "sx": 307.94,
+      "sy": 324.32
+    },
+    "Vivièn": {
+      "zone": "veld",
+      "sx": 176.2,
+      "sy": 105.68
+    },
+    "Isabel": {
+      "zone": "veld",
+      "sx": 340.87,
+      "sy": 105.68
+    },
+    "Doutzen": {
+      "zone": "veld",
+      "sx": 373.8,
+      "sy": 215
+    },
+    "Faye": {
+      "zone": "veld",
+      "sx": 110.33,
+      "sy": 215
+    },
+    "Noralie": {
+      "zone": "veld",
+      "sx": 25.94,
+      "sy": 215
+    },
+    "Renske": {
+      "zone": "wissel"
+    },
+    "Rosie": {
+      "zone": "veld",
+      "sx": 143.27,
+      "sy": 324.32
+    },
+    "Nina": {
+      "zone": "wissel"
+    },
+    "Mathilde": {
+      "zone": "veld",
+      "sx": 242.07,
+      "sy": 215
+    }
+  },
+  "updatedAt": "2026-11-02T18:27:00.000Z"
+}
