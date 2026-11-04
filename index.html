@@ -922,6 +922,27 @@ var cardBlob=null,cardName="";
 function roundRect(x,X,Y,W,H,R){x.beginPath();x.moveTo(X+R,Y);x.arcTo(X+W,Y,X+W,Y+H,R);x.arcTo(X+W,Y+H,X,Y+H,R);x.arcTo(X,Y+H,X,Y,R);x.arcTo(X,Y,X+W,Y,R);x.closePath();}
 function loadImg(src){return new Promise(function(res){if(!src)return res(null);var i=new Image();i.onload=function(){res(i);};i.onerror=function(){res(null);};i.src=src;});}
 var LIJNKLEUR={keeper:"#FDE047",achter:"#60A5FA",midden:"#C4B5FD",voor:"#FB7185"};
+  function drawShareField(x,fx,fy,FW,FH){
+    // Broncoordinaten zijn 954 x 590 (liggend). De canvastransformatie roteert
+    // die geometrie 90 graden naar hetzelfde staande veld als in de app.
+    var sx=FW/590,sy=FH/954;
+    x.save();
+    x.setTransform(0,-sy,sx,0,fx,fy+FH);
+    function stroke(alpha,width){x.strokeStyle="rgba(255,255,255,"+alpha+")";x.lineWidth=width;x.fillStyle="transparent";}
+    stroke(.45,2);x.strokeRect(8,276.7,12,36.6);x.strokeRect(934,276.7,12,36.6);
+    stroke(.6,2.5);x.strokeRect(20,20,914,550);
+    stroke(.6,2);x.beginPath();x.moveTo(477,20);x.lineTo(477,570);x.stroke();
+    stroke(.45,2);x.beginPath();x.moveTo(249,20);x.lineTo(249,570);x.moveTo(705,20);x.lineTo(705,570);x.stroke();
+    stroke(.8,2.5);
+    x.beginPath();x.ellipse(20,295,146.3,146.3,0,-Math.PI/2,Math.PI/2);x.stroke();
+    x.beginPath();x.ellipse(934,295,146.3,146.3,0,Math.PI/2,Math.PI*1.5);x.stroke();
+    stroke(.35,1.5);x.setLineDash([6,10]);
+    x.beginPath();x.ellipse(20,295,196.3,196.3,0,-Math.PI/2,Math.PI/2);x.stroke();
+    x.beginPath();x.ellipse(934,295,196.3,196.3,0,Math.PI/2,Math.PI*1.5);x.stroke();x.setLineDash([]);
+    x.fillStyle="rgba(255,255,255,.6)";[[84,295],[870,295]].forEach(function(p){x.beginPath();x.arc(p[0],p[1],3,0,Math.PI*2);x.fill();});
+    x.fillStyle="rgba(255,255,255,.45)";x.beginPath();x.arc(477,295,3,0,Math.PI*2);x.fill();
+    x.restore();
+  }
 function shareLineup(){
   rebuildPlekken();
   var i=parseInt($("picker").value,10),m=i>=0?MATCHES[i]:null,k=keeperName();
@@ -962,26 +983,18 @@ function shareLineup(){
       x.fillStyle="#111";x.font="800 30px "+F;x.fillText(fit(x,r[1],cw-48),cx+24,cy+76);});
     y+=detH?detH-12:0;
     if(noteH){x.fillStyle="#FFF7E6";roundRect(x,P,y,FW,70,18);x.fill();x.fillStyle="#92400E";x.font="700 27px "+F;x.fillText(fit(x,"⚠ "+m.bijzonderheden,FW-48),P+24,y+45);y+=noteH;}
-    // veld (staand): rechtstreeks uit exact dezelfde SVG-geometrie als de live opstelling.
-    // We roteren het bestaande liggende veld 90 graden. Geen aparte canvas-reconstructie meer.
-    var fx=P,fy=y,SRCW=954,SRCH=590;
+    // Veld (staand): teken de lijnen direct op canvas.
+    // Dit vermijdt de iOS Safari route SVG -> Blob URL -> Image -> Canvas.
+    var fx=P,fy=y;
     x.save();roundRect(x,fx,fy,FW,FH,32);x.clip();
     for(var bb=0;bb<9;bb++){x.fillStyle=bb%2?"#006E4F":"#007856";x.fillRect(fx,fy+bb*FH/9,FW,FH/9+1);}
-    var svgMarkup='<svg xmlns="http://www.w3.org/2000/svg" width="590" height="954" viewBox="0 0 590 954">'+
-      '<g transform="translate(0 954) rotate(-90)">'+document.getElementById("veld-g").outerHTML+'</g></svg>';
-    var fieldUrl=URL.createObjectURL(new Blob([svgMarkup],{type:"image/svg+xml;charset=utf-8"}));
-    var fieldImg=new Image();
-    fieldImg.onload=function(){
-      x.drawImage(fieldImg,fx,fy,FW,FH);URL.revokeObjectURL(fieldUrl);
-      var toonP=weergave(plek),R=Math.round(FW*.065);
-      veldN.forEach(function(n){var ss=mToSvg(toonP[n].mx,toonP[n].my),px=fx+(ss.sy/SVG_H)*FW,py=fy+(1-ss.sx/SVG_W)*FH;
-        px=Math.min(fx+FW-R-20,Math.max(fx+R+20,px));py=Math.min(fy+FH-R-60,Math.max(fy+R+14,py));
-        drawPlayer(x,n,px,py,R,ph[n],F,n===k);});
-      x.restore();
-      finishShareCard();
-    };
-    fieldImg.onerror=function(){URL.revokeObjectURL(fieldUrl);x.restore();finishShareCard();};
-    fieldImg.src=fieldUrl;
+    drawShareField(x,fx,fy,FW,FH);
+    var toonP=weergave(plek),R=Math.round(FW*.065);
+    veldN.forEach(function(n){var ss=mToSvg(toonP[n].mx,toonP[n].my),px=fx+(ss.sy/SVG_H)*FW,py=fy+(1-ss.sx/SVG_W)*FH;
+      px=Math.min(fx+FW-R-20,Math.max(fx+R+20,px));py=Math.min(fy+FH-R-60,Math.max(fy+R+14,py));
+      drawPlayer(x,n,px,py,R,ph[n],F,n===k);});
+    x.restore();
+    finishShareCard();
     function finishShareCard(){
     y=fy+FH+34;
     x.fillStyle="#6B6B6B";x.font="800 22px "+F;x.fillText("WISSELS",P,y+20);
