@@ -346,19 +346,19 @@ tbody tr:last-child td:first-child{background:var(--bg)}
     </div>
     <div class="stage" id="stage">
       <div class="veld" id="veld">
-        <svg id="veld-svg" viewBox="0 0 954 590" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><g id="veld-g">
-          <rect x="8" y="276.7" width="12" height="36.6" fill="none" stroke="white" stroke-width="2" opacity="0.45"></rect>
-          <rect x="934" y="276.7" width="12" height="36.6" fill="none" stroke="white" stroke-width="2" opacity="0.45"></rect>
-          <rect x="20" y="20" width="914" height="550" fill="none" stroke="white" stroke-width="2.5" opacity="0.6"></rect>
-          <line x1="477" y1="20" x2="477" y2="570" stroke="white" stroke-width="2" opacity="0.6"></line>
-          <line x1="249" y1="20" x2="249" y2="570" stroke="white" stroke-width="2" opacity="0.45"></line>
-          <line x1="705" y1="20" x2="705" y2="570" stroke="white" stroke-width="2" opacity="0.45"></line>
-          <path d="M 20,130.4 A 146.3,146.3 0 0,1 166.3,276.7 L 166.3,313.3 A 146.3,146.3 0 0,1 20,459.6" fill="none" stroke="white" stroke-width="2.5" opacity="0.8"></path>
-          <path d="M 934,130.4 A 146.3,146.3 0 0,0 787.7,276.7 L 787.7,313.3 A 146.3,146.3 0 0,0 934,459.6" fill="none" stroke="white" stroke-width="2.5" opacity="0.8"></path>
-          <path d="M 20,80.4 A 196.3,196.3 0 0,1 216.3,276.7 L 216.3,313.3 A 196.3,196.3 0 0,1 20,509.6" fill="none" stroke="white" stroke-width="1.5" stroke-dasharray="6,10" opacity="0.35"></path>
-          <path d="M 934,80.4 A 196.3,196.3 0 0,0 737.7,276.7 L 737.7,313.3 A 196.3,196.3 0 0,0 934,509.6" fill="none" stroke="white" stroke-width="1.5" stroke-dasharray="6,10" opacity="0.35"></path>
-          <circle cx="84" cy="295" r="3" fill="white" opacity="0.6"></circle><circle cx="870" cy="295" r="3" fill="white" opacity="0.6"></circle><circle cx="477" cy="295" r="3" fill="white" opacity="0.45"></circle>
-        </g></svg>
+        <svg id="veld-svg" viewBox="0 0 590 954" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><g id="veld-g">
+<rect x="276.7" y="8" width="36.6" height="12" fill="none" stroke="white" stroke-width="2" opacity="0.45"/>
+<rect x="276.7" y="934" width="36.6" height="12" fill="none" stroke="white" stroke-width="2" opacity="0.45"/>
+<rect x="20" y="20" width="550" height="914" fill="none" stroke="white" stroke-width="2.5" opacity="0.6"/>
+<line x1="20" y1="477" x2="570" y2="477" stroke="white" stroke-width="2" opacity="0.6"/>
+<line x1="20" y1="249" x2="570" y2="249" stroke="white" stroke-width="2" opacity="0.45"/>
+<line x1="20" y1="705" x2="570" y2="705" stroke="white" stroke-width="2" opacity="0.45"/>
+<path d="M130.4 20 A146.3 146.3 0 0 0 276.7 166.3 L313.3 166.3 A146.3 146.3 0 0 0 459.6 20" fill="none" stroke="white" stroke-width="2.5" opacity="0.8"/>
+<path d="M130.4 934 A146.3 146.3 0 0 1 276.7 787.7 L313.3 787.7 A146.3 146.3 0 0 1 459.6 934" fill="none" stroke="white" stroke-width="2.5" opacity="0.8"/>
+<path d="M80.4 20 A196.3 196.3 0 0 0 276.7 216.3 L313.3 216.3 A196.3 196.3 0 0 0 509.6 20" fill="none" stroke="white" stroke-width="1.5" stroke-dasharray="6,10" opacity="0.35"/>
+<path d="M80.4 934 A196.3 196.3 0 0 1 276.7 737.7 L313.3 737.7 A196.3 196.3 0 0 1 509.6 934" fill="none" stroke="white" stroke-width="1.5" stroke-dasharray="6,10" opacity="0.35"/>
+<circle cx="295" cy="84" r="3" fill="white" opacity="0.6"/><circle cx="295" cy="870" r="3" fill="white" opacity="0.6"/><circle cx="295" cy="477" r="3" fill="white" opacity="0.45"/>
+</g></svg>
         <div class="hulp" id="hulp"><div class="lh"></div><div class="lv"></div><div class="ring"></div></div>
       </div>
     </div>
@@ -488,8 +488,8 @@ var KOLOMMEN=(function(){var st=VELD_LENGTE/16,k=[2.5];for(var i=1;i<16;i++)k.pu
 var KEEPER_X=[2.5,VELD_LENGTE-2.5];
 function portrait(){if(window.matchMedia)return window.matchMedia("(orientation: portrait)").matches;return window.innerHeight>=window.innerWidth;}
 var isPortrait=false;
-function toPct(sx,sy){return isPortrait?{x:1-sy/SVG_H,y:1-sx/SVG_W}:{x:sx/SVG_W,y:sy/SVG_H};}
-function toSvg(px,py){return isPortrait?{sx:(1-py)*SVG_W,sy:(1-px)*SVG_H}:{sx:px*SVG_W,sy:py*SVG_H};}
+function toPct(sx,sy){return isPortrait?{x:sy/SVG_H,y:1-sx/SVG_W}:{x:sx/SVG_W,y:sy/SVG_H};}
+function toSvg(px,py){return isPortrait?{sx:(1-py)*SVG_W,sy:px*SVG_H}:{sx:px*SVG_W,sy:py*SVG_H};}
 function svgToM(sx,sy){return{mx:(sx/SVG_W*954-20)/10,my:(sy/SVG_H*590-295)/10};}
 function mToSvg(mx,my){return{sx:Math.round((20+mx*10)/954*SVG_W*100)/100,sy:Math.round((295+my*10)/590*SVG_H*100)/100};}
 function nearest(list,v){var b=list[0];list.forEach(function(x){if(Math.abs(x-v)<Math.abs(b-v))b=x;});return b;}
@@ -544,14 +544,13 @@ function keeperName(){
 
 // ================== VELD TEKENEN ==================
 function sizeVeld(){
-  var st=$("stage"),v=$("veld"),svg=$("veld-svg"),g=$("veld-g");
-  isPortrait=portrait();
+  var st=$("stage"),v=$("veld"),svg=$("veld-svg"),g=$("veld-g");isPortrait=portrait();
   var W=Math.max(0,st.clientWidth-6),H=Math.max(0,st.clientHeight-6);if(!W||!H)return;
-  var ratio=isPortrait?590/954:954/590,w=W,h=H;
-  if(W/H>ratio){w=H*ratio;h=H;}else{w=W;h=W/ratio;}
+  var ratio=isPortrait?590/954:954/590,w=W,h=H;if(W/H>ratio){w=H*ratio;h=H;}else{w=W;h=W/ratio;}
   v.classList.toggle("portrait",isPortrait);v.style.width=Math.floor(w)+"px";v.style.height=Math.floor(h)+"px";
-  if(isPortrait){svg.setAttribute("viewBox","0 0 590 954");g.setAttribute("transform","translate(590,0) rotate(90)");}
-  else{svg.setAttribute("viewBox","0 0 954 590");g.removeAttribute("transform");}
+  // The field is authored directly in portrait coordinates. Do not rotate veld-g on iPhone.
+  if(isPortrait){svg.setAttribute("viewBox","0 0 590 954");g.removeAttribute("transform");}
+  else{svg.setAttribute("viewBox","0 0 590 954");g.removeAttribute("transform");}
   var c=Math.round(Math.max(34,Math.min(54,Math.min(w,h)*.13)));v.style.setProperty("--c",c+"px");
 }
 function inner(s){var p=photos[s.name];return p?'<img src="'+p+'" alt="">':esc(s.initials||s.name.slice(0,2));}
@@ -968,13 +967,13 @@ function shareLineup(){
     x.save();roundRect(x,fx,fy,FW,FH,32);x.clip();
     for(var bb=0;bb<9;bb++){x.fillStyle=bb%2?"#006E4F":"#007856";x.fillRect(fx,fy+bb*FH/9,FW,FH/9+1);}
     var svgMarkup='<svg xmlns="http://www.w3.org/2000/svg" width="590" height="954" viewBox="0 0 590 954">'+
-      '<g transform="translate(590 0) rotate(90)">'+document.getElementById("veld-g").outerHTML+'</g></svg>';
+      '<g transform="translate(0 954) rotate(-90)">'+document.getElementById("veld-g").outerHTML+'</g></svg>';
     var fieldUrl=URL.createObjectURL(new Blob([svgMarkup],{type:"image/svg+xml;charset=utf-8"}));
     var fieldImg=new Image();
     fieldImg.onload=function(){
       x.drawImage(fieldImg,fx,fy,FW,FH);URL.revokeObjectURL(fieldUrl);
       var toonP=weergave(plek),R=Math.round(FW*.065);
-      veldN.forEach(function(n){var ss=mToSvg(toonP[n].mx,toonP[n].my),px=fx+(1-ss.sy/SVG_H)*FW,py=fy+(1-ss.sx/SVG_W)*FH;
+      veldN.forEach(function(n){var ss=mToSvg(toonP[n].mx,toonP[n].my),px=fx+(ss.sy/SVG_H)*FW,py=fy+(1-ss.sx/SVG_W)*FH;
         px=Math.min(fx+FW-R-20,Math.max(fx+R+20,px));py=Math.min(fy+FH-R-60,Math.max(fy+R+14,py));
         drawPlayer(x,n,px,py,R,ph[n],F,n===k);});
       x.restore();
