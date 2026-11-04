@@ -1021,9 +1021,22 @@ function drawPlayer(x,n,px,py,R,img,F,isK,light){
   x.fillStyle=light?"#111":"#fff";x.textAlign="center";x.fillText(n,px,py+R+8+th*.72);x.textAlign="left";
 }
 function cardShare(){
-  if(!cardBlob)return;var file=new File([cardBlob],cardName,{type:"image/png"});
-  if(navigator.canShare&&navigator.canShare({files:[file]}))navigator.share({files:[file]}).catch(function(){});
-  else cardDownload();
+  if(!cardBlob)return;
+  // Maak alleen voor Delen een compactere 4:5 versie. Opslaan blijft de volledige kaart.
+  var img=new Image();
+  img.onload=function(){
+    var targetW=1080,targetH=1350;
+    // De WhatsApp-versie bevat de volledige kaart, proportioneel verkleind en gecentreerd.
+    // Hierdoor hoeft WhatsApp veel minder agressief uit het midden te croppen.
+    var sc=document.createElement("canvas");sc.width=targetW;sc.height=targetH;var sx=sc.getContext("2d");
+    var bg=sx.createLinearGradient(0,0,targetW,targetH);bg.addColorStop(0,"#101312");bg.addColorStop(.55,"#0B1D17");bg.addColorStop(1,"#064B38");sx.fillStyle=bg;sx.fillRect(0,0,targetW,targetH);
+    var pad=28,scale=Math.min((targetW-2*pad)/img.width,(targetH-2*pad)/img.height),dw=img.width*scale,dh=img.height*scale,dx=(targetW-dw)/2,dy=(targetH-dh)/2;
+    sx.fillStyle="#F5F5F2";roundRect(sx,dx,dy,dw,dh,24);sx.fill();sx.save();roundRect(sx,dx,dy,dw,dh,24);sx.clip();sx.drawImage(img,dx,dy,dw,dh);sx.restore();
+    sc.toBlob(function(bl){var waName=cardName.replace(/\.png$/,"-whatsapp.png"),file=new File([bl],waName,{type:"image/png"});
+      if(navigator.canShare&&navigator.canShare({files:[file]}))navigator.share({files:[file]}).catch(function(){});else{var a=document.createElement("a");a.href=URL.createObjectURL(bl);a.download=waName;document.body.appendChild(a);a.click();setTimeout(function(){a.remove();},1000);}
+    },"image/png");
+  };
+  img.src=URL.createObjectURL(cardBlob);
 }
 function cardDownload(){if(!cardBlob)return;var a=document.createElement("a");a.href=URL.createObjectURL(cardBlob);a.download=cardName;document.body.appendChild(a);a.click();setTimeout(function(){a.remove();},1000);}
 function cardClose(){$("card-modal").classList.remove("open");}
