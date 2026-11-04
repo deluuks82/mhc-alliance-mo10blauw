@@ -488,8 +488,8 @@ var KOLOMMEN=(function(){var st=VELD_LENGTE/16,k=[2.5];for(var i=1;i<16;i++)k.pu
 var KEEPER_X=[2.5,VELD_LENGTE-2.5];
 function portrait(){if(window.matchMedia)return window.matchMedia("(orientation: portrait)").matches;return window.innerHeight>=window.innerWidth;}
 var isPortrait=false;
-function toPct(sx,sy){return isPortrait?{x:1-sy/SVG_H,y:sx/SVG_W}:{x:sx/SVG_W,y:sy/SVG_H};}
-function toSvg(px,py){return isPortrait?{sx:py*SVG_W,sy:(1-px)*SVG_H}:{sx:px*SVG_W,sy:py*SVG_H};}
+function toPct(sx,sy){return isPortrait?{x:1-sy/SVG_H,y:1-sx/SVG_W}:{x:sx/SVG_W,y:sy/SVG_H};}
+function toSvg(px,py){return isPortrait?{sx:(1-py)*SVG_W,sy:(1-px)*SVG_H}:{sx:px*SVG_W,sy:py*SVG_H};}
 function svgToM(sx,sy){return{mx:(sx/SVG_W*954-20)/10,my:(sy/SVG_H*590-295)/10};}
 function mToSvg(mx,my){return{sx:Math.round((20+mx*10)/954*SVG_W*100)/100,sy:Math.round((295+my*10)/590*SVG_H*100)/100};}
 function nearest(list,v){var b=list[0];list.forEach(function(x){if(Math.abs(x-v)<Math.abs(b-v))b=x;});return b;}
@@ -550,7 +550,7 @@ function sizeVeld(){
   var ratio=isPortrait?590/954:954/590,w=W,h=H;
   if(W/H>ratio){w=H*ratio;h=H;}else{w=W;h=W/ratio;}
   v.classList.toggle("portrait",isPortrait);v.style.width=Math.floor(w)+"px";v.style.height=Math.floor(h)+"px";
-  if(isPortrait){svg.setAttribute("viewBox","0 0 590 954");g.setAttribute("transform","translate(0,954) rotate(-90)");}
+  if(isPortrait){svg.setAttribute("viewBox","0 0 590 954");g.setAttribute("transform","translate(590,0) rotate(90)");}
   else{svg.setAttribute("viewBox","0 0 954 590");g.removeAttribute("transform");}
   var c=Math.round(Math.max(34,Math.min(54,Math.min(w,h)*.13)));v.style.setProperty("--c",c+"px");
 }
@@ -968,13 +968,13 @@ function shareLineup(){
     x.save();roundRect(x,fx,fy,FW,FH,32);x.clip();
     for(var bb=0;bb<9;bb++){x.fillStyle=bb%2?"#006E4F":"#007856";x.fillRect(fx,fy+bb*FH/9,FW,FH/9+1);}
     var svgMarkup='<svg xmlns="http://www.w3.org/2000/svg" width="590" height="954" viewBox="0 0 590 954">'+
-      '<g transform="translate(0 954) rotate(-90)">'+document.getElementById("veld-g").outerHTML+'</g></svg>';
+      '<g transform="translate(590 0) rotate(90)">'+document.getElementById("veld-g").outerHTML+'</g></svg>';
     var fieldUrl=URL.createObjectURL(new Blob([svgMarkup],{type:"image/svg+xml;charset=utf-8"}));
     var fieldImg=new Image();
     fieldImg.onload=function(){
       x.drawImage(fieldImg,fx,fy,FW,FH);URL.revokeObjectURL(fieldUrl);
       var toonP=weergave(plek),R=Math.round(FW*.065);
-      veldN.forEach(function(n){var ss=mToSvg(toonP[n].mx,toonP[n].my),px=fx+(1-ss.sy/SVG_H)*FW,py=fy+(ss.sx/SVG_W)*FH;
+      veldN.forEach(function(n){var ss=mToSvg(toonP[n].mx,toonP[n].my),px=fx+(1-ss.sy/SVG_H)*FW,py=fy+(1-ss.sx/SVG_W)*FH;
         px=Math.min(fx+FW-R-20,Math.max(fx+R+20,px));py=Math.min(fy+FH-R-60,Math.max(fy+R+14,py));
         drawPlayer(x,n,px,py,R,ph[n],F,n===k);});
       x.restore();
