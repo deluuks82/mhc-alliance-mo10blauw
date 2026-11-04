@@ -550,7 +550,7 @@ function sizeVeld(){
   var ratio=isPortrait?590/954:954/590,w=W,h=H;
   if(W/H>ratio){w=H*ratio;h=H;}else{w=W;h=W/ratio;}
   v.classList.toggle("portrait",isPortrait);v.style.width=Math.floor(w)+"px";v.style.height=Math.floor(h)+"px";
-  if(isPortrait){svg.setAttribute("viewBox","0 0 590 954");g.setAttribute("transform","translate(590,0) rotate(90)");}
+  if(isPortrait){svg.setAttribute("viewBox","0 0 590 954");g.setAttribute("transform","translate(0,954) rotate(-90)");}
   else{svg.setAttribute("viewBox","0 0 954 590");g.removeAttribute("transform");}
   var c=Math.round(Math.max(34,Math.min(54,Math.min(w,h)*.13)));v.style.setProperty("--c",c+"px");
 }
@@ -968,7 +968,7 @@ function shareLineup(){
     x.save();roundRect(x,fx,fy,FW,FH,32);x.clip();
     for(var bb=0;bb<9;bb++){x.fillStyle=bb%2?"#006E4F":"#007856";x.fillRect(fx,fy+bb*FH/9,FW,FH/9+1);}
     var svgMarkup='<svg xmlns="http://www.w3.org/2000/svg" width="590" height="954" viewBox="0 0 590 954">'+
-      '<g transform="translate(590 0) rotate(90)">'+document.getElementById("veld-g").outerHTML+'</g></svg>';
+      '<g transform="translate(0 954) rotate(-90)">'+document.getElementById("veld-g").outerHTML+'</g></svg>';
     var fieldUrl=URL.createObjectURL(new Blob([svgMarkup],{type:"image/svg+xml;charset=utf-8"}));
     var fieldImg=new Image();
     fieldImg.onload=function(){
