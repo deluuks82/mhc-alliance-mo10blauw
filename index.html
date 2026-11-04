@@ -960,21 +960,22 @@ function shareLineup(){
       if(m.rijden&&m.rijden.length)det.push(["Rijden",m.rijden.join(", ")]);else if(!th)det.push(["Rijden","NNB"]);
       if(m.tenue)det.push(["Tenue",m.tenue]);}
     var rows=Math.ceil(det.length/2),noteH=m&&m.bijzonderheden?90:0;
-    var headH=m?300:220,detH=rows?rows*110+40:0,benchH=170;
+    var safeTop=180,headH=(m?300:220)+safeTop,detH=rows?rows*110+40:0,benchH=170;
     var H=headH+detH+noteH+FH+benchH+70;
     var c=document.createElement("canvas");c.width=W;c.height=H;var x=c.getContext("2d");
     var F="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif";
     x.fillStyle="#F5F5F2";x.fillRect(0,0,W,H);
     // kop
-    var g=x.createLinearGradient(0,0,W,headH);g.addColorStop(0,m&&m.type!=="Thuis"?"#F53D3D":"#007856");g.addColorStop(1,m&&m.type!=="Thuis"?"#C82424":"#005A40");
-    x.fillStyle="#111";x.fillRect(0,0,W,headH);x.fillStyle=g;x.fillRect(0,headH-12,W,12);
-    if(logo)x.drawImage(logo,P,44,96,116);
-    x.fillStyle="#3FBF93";x.font="800 26px "+F;x.fillText("MHC ALLIANCE · OPSTELLING",P+124,78);
-    x.fillStyle="#fff";x.font="900 52px "+F;x.fillText(TEAM,P+124,138);
+    var bg=x.createLinearGradient(0,0,W,headH);bg.addColorStop(0,"#101312");bg.addColorStop(.58,"#0B1D17");bg.addColorStop(1,"#064B38");
+    x.fillStyle=bg;x.fillRect(0,0,W,headH);
+    var g=x.createLinearGradient(0,0,W,12);g.addColorStop(0,m&&m.type!=="Thuis"?"#F53D3D":"#007856");g.addColorStop(1,m&&m.type!=="Thuis"?"#C82424":"#005A40");x.fillStyle=g;x.fillRect(0,headH-12,W,12);
+    if(logo)x.drawImage(logo,P,44+safeTop,96,116);
+    x.fillStyle="#3FBF93";x.font="800 26px "+F;x.fillText("MHC ALLIANCE · OPSTELLING",P+124,78+safeTop);
+    x.fillStyle="#fff";x.font="900 52px "+F;x.fillText(TEAM,P+124,138+safeTop);
     if(m){var d=matchDate(m);
-      x.font="900 44px "+F;x.fillText(fit(x,(m.type==="Thuis"?"Thuis tegen ":"Uit bij ")+(m.tegenstander||""),W-2*P),P,228);
-      x.fillStyle="rgba(255,255,255,.65)";x.font="600 28px "+F;x.fillText(fit(x,cap(DAGEN[d.getDay()])+" "+d.getDate()+" "+MAANDEN[d.getMonth()]+(m.locatie?" · "+m.locatie:""),W-2*P),P,270);
-    }else{x.fillStyle="rgba(255,255,255,.6)";x.font="600 28px "+F;x.fillText("Seizoen 2026-2027",P+124,180);}
+      x.font="900 44px "+F;x.fillText(fit(x,(m.type==="Thuis"?"Thuis tegen ":"Uit bij ")+(m.tegenstander||""),W-2*P),P,228+safeTop);
+      x.fillStyle="rgba(255,255,255,.65)";x.font="600 28px "+F;x.fillText(fit(x,cap(DAGEN[d.getDay()])+" "+d.getDate()+" "+MAANDEN[d.getMonth()]+(m.locatie?" · "+m.locatie:""),W-2*P),P,270+safeTop);
+    }else{x.fillStyle="rgba(255,255,255,.6)";x.font="600 28px "+F;x.fillText("Seizoen 2026-2027",P+124,180+safeTop);}
     var y=headH+28;
     // details
     det.forEach(function(r,j){var cx=P+(j%2)*(FW/2+8),cy=y+Math.floor(j/2)*110,cw=FW/2-8;
